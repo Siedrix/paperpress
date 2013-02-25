@@ -39,6 +39,10 @@ Then create a directory for you paperpress files. It needs the following directo
 # Todos
 
 - Pagination
-- Render links correctly
+- Single Pages
 - Static assets per post
 - Comments
+
+# Bugs
+- Render links correctly
+
