@@ -1,0 +1,14 @@
+{% extends './static/layouts/layout.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+
+	{% for article in articles -%}	  
+	<div class="post">
+		<h4>{{ article.title }}</h4>
+		<div>{{ article.description }}</div>
+	</div>
+	{%- endfor %}	
+	
+
+{% endblock %}

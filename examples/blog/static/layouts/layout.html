@@ -1,0 +1,16 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>{% block title %}My Site{% endblock %}</title>
+	{% block head %}
+	<link rel="stylesheet" href="{{ baseUrl }}/style/main.css">
+	{% endblock %}
+</head>
+<body>
+	<div class="wrapper">
+		<h1>PaperPress</h1>
+		{% block content %}{% endblock %}
+	</div>
+</body>
+</html>

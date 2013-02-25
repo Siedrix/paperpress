@@ -1,0 +1,11 @@
+{
+	"name"    : "paperpress",
+	"version" : "0.0.1",
+	"main"    : "./paperpress",
+	"keywords": ["express", "markdown", "publishing"],
+	"dependencies": {
+		"node-markdown" : "0.1.1",
+		"swig" : "0.13.5",
+		"express" : "3.1.0"
+	}	
+}
