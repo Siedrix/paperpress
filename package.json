@@ -1,6 +1,6 @@
 {
 	"name"    : "paperpress",
-	"version" : "0.0.1",
+	"version" : "0.0.2",
 	"main"    : "./paperpress",
 	"keywords": ["express", "markdown", "publishing"],
 	"dependencies": {
