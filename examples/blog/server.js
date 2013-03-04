@@ -5,7 +5,8 @@ var server = express();
 
 var blog = new Paperpress({
 	directory : 'static',
-	basePath  : '/blog'
+	basePath  : '/blog',
+	pagesPath : ''
 });
 
 blog.attach(server);

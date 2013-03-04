@@ -27,7 +27,8 @@ For more information check the example folder
 
 Then create a directory for you paperpress files. It needs the following directories
 
-- **/articles** this folder will contain all the pages and blog post of the aplication.
+- **/articles** this folder will contain all the blog posts of the aplication.
+- **/pages** this folder will contain all the pages of the aplication.
 - **/layout** this containt the templates for the article and multiple article pages.
 - **/public** this containes all assets particular to paperpress, like css, images, fonts and js.
 
@@ -36,13 +37,26 @@ Then create a directory for you paperpress files. It needs the following directo
 - **info.json** This file needs to have title, description and date. Path is optional, will use a slugify version of the title if its not present.
 - **content.md** This is the main content of the article, it should be written in mark up.
 
+# Pages structure
+
+- **info.json** This file needs to have title. Path is optional, will use a slugify version of the title if its not present.
+- **content.md** This is the main content of the article, it should be written in mark up.
+
 # Todos
 
 - Pagination
-- Single Pages
 - Static assets per post
 - Comments
+- Good looking design on example
+- Wordpress to Paperpress script
+- Scafolding
+
+# Nice to haves
+
+- Paperpress documentation site build on paperpress.
+- Pages with no info.json should use directory name as title.
 
 # Bugs
+
 - Render links correctly
 

@@ -18,6 +18,7 @@ swig.init({
 var Paperpress = function (config) {
 	this.directory   = config.directory;
 	this.basePath = config.basePath;
+	this.pagesPath = config.pagesPath;
 
 	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
 	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
@@ -44,6 +45,23 @@ Paperpress._directoryToArticle = function (directory) {
 	});
 
 	return article;
+}
+
+Paperpress._directoryToPage = function (directory) {
+	var page = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
+
+	if(!page.path){
+		page.path = Paperpress._titleToSlug(page.title);
+	}
+
+	var content = fs.readFileSync(directory.path + '/content.md').toString();
+
+	page.content = md(content, true, "h1|h2|h3|h4|p|strong|span|a", {
+	    "a":"href",        // 'href' for links
+	    "*":"title|style"  // 'title' and 'style' for all
+	});
+
+	return page;
 }
 
 Paperpress._sortArticles = function (article) {
@@ -87,6 +105,31 @@ Paperpress.prototype.attach = function(server) {
 			var renderedHtml = paperpress.singleTpl.render({
 				baseUrl : paperpress.basePath,
 				article : article
+			});
+
+			res.send(renderedHtml);
+		});
+	});
+
+	// Get pages
+	var pages = [];
+	fs.readdirSync(this.directory + '/pages').forEach(function (article) {
+		var path  = paperpress.directory + '/pages/' + article,
+			stats = fs.statSync(path);
+
+		if(stats.isDirectory()){
+			pages.push(Paperpress._directoryToPage({
+				path  : path,
+				stats : stats,
+			}));
+		}
+	});
+
+	pages.forEach(function (page) {
+		server.get(paperpress.pagesPath + '/' + page.path, function(req, res){
+			var renderedHtml = paperpress.singleTpl.render({
+				baseUrl : paperpress.pagesPath,
+				article : page
 			});
 
 			res.send(renderedHtml);
