@@ -12,7 +12,7 @@ var blog = new Paperpress({
 blog.attach(server);
 
 server.get('/', function (req, res) {
-	res.send('Welcome');
+	res.redirect('/blog');
 });
 
 server.listen(3000);
