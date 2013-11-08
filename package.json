@@ -1,15 +1,20 @@
 {
-	"name"    : "paperpress",
-	"version" : "0.0.3",
-	"main"    : "./paperpress",
-	"keywords": ["express", "markdown", "publishing"],
-	"dependencies": {
-		"node-markdown" : "0.1.1",
-		"swig" : "0.13.5",
-		"express" : "3.1.0"
-	},
-	"repository": {
-		"type" : "git",
-		"url"  : "https://github.com/Siedrix/paperpress"
-	}
+  "name": "paperpress",
+  "version": "0.0.3",
+  "main": "./paperpress",
+  "keywords": [
+    "express",
+    "markdown",
+    "publishing"
+  ],
+  "dependencies": {
+    "node-markdown": "0.1.1",
+    "swig": "0.13.5",
+    "express": "3.1.0",
+    "feed": "~0.2.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Siedrix/paperpress"
+  }
 }

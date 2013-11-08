@@ -1,27 +1,31 @@
 var fs = require("fs"),
 	md = require("node-markdown").Markdown,
 	swig = require("swig"),
-	express = require("express");
+	express = require("express"),
+	Feed = require("feed");
 
 swig.init({
-  allowErrors: false,
-  autoescape: true,
-  cache: true,
-  encoding: 'utf8',
-  filters: {},
-  root: "./",
-  tags: {},
-  extensions: {},
-  tzOffset: 0
+	allowErrors: false,
+	autoescape: true,
+	cache: true,
+	encoding: 'utf8',
+	filters: {},
+	root: "./",
+	tags: {},
+	extensions: {},
+	tzOffset: 0
 });
 
 var Paperpress = function (config) {
-	this.directory   = config.directory;
+	this.directory   = config.directory || "static";
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
 
 	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
 	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
+
+	var description = fs.readFileSync('./' + config.directory + '/blog-description.json', 'utf8');
+	this.blogDescription = JSON.parse(description);
 };
 
 Paperpress._titleToSlug = function (title) {
@@ -64,13 +68,13 @@ Paperpress._directoryToPage = function (directory) {
 	});
 
 	return page;
-}
+};
 
 Paperpress._sortArticles = function (article) {
 	return article.sort(function (a, b) {
 		return new Date(a.date).getTime(), new Date(b.date).getTime() ? 1 : -1;
 	});
-}
+};
 
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
@@ -139,6 +143,22 @@ Paperpress.prototype.attach = function(server) {
 
 			res.send(renderedHtml);
 		});
+	});
+
+	// Since new articles arent added on real time, feed is created
+	// just once, when the server is booted.
+	var feed = new Feed(this.blogDescription);
+
+	articles.forEach(function (item) {
+		item.link = paperpress.blogDescription.link + item.uri;
+		item.date = new Date(item.date);
+
+		feed.item(item);
+	});
+
+	server.get('/rss', function (req, res) {
+		res.set('Content-Type', 'text/xml');
+		res.send(feed.render('rss-2.0'));
 	});
 
 	// Add static files
