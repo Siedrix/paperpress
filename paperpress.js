@@ -21,6 +21,7 @@ var Paperpress = function (config) {
 	this.directory   = config.directory || "static";
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
+	this.articlesPerPage = config.articlesPerPage || 5;
 
 	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
 	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
@@ -58,7 +59,7 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 Paperpress.prototype.getArticlesInPage = function (page) {
 	var articles = _.clone(this.articles);
 
-	return articles.splice(page * 5, 5);
+	return articles.splice(page * this.articlesPerPage, this.articlesPerPage);
 };
 
 Paperpress._directoryToPage = function (directory) {
