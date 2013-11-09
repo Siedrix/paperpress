@@ -2,7 +2,8 @@ var fs = require("fs"),
 	md = require("node-markdown").Markdown,
 	swig = require("swig"),
 	express = require("express"),
-	Feed = require("feed");
+	Feed = require("feed"),
+	_ = require("underscore");
 
 swig.init({
 	allowErrors: false,
@@ -42,6 +43,7 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 	}
 
 	article.uri = this.basePath + '/' + article.path;
+	article.date = new Date(article.date);
 
 	var content = fs.readFileSync(directory.path + '/content.md').toString();
 
@@ -51,6 +53,12 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 	});
 
 	return article;
+};
+
+Paperpress.prototype.getArticlesInPage = function (page) {
+	var articles = _.clone(this.articles);
+
+	return articles.splice(page * 5, 5);
 };
 
 Paperpress._directoryToPage = function (directory) {
@@ -72,7 +80,7 @@ Paperpress._directoryToPage = function (directory) {
 
 Paperpress._sortArticles = function (article) {
 	return article.sort(function (a, b) {
-		return new Date(a.date).getTime(), new Date(b.date).getTime() ? 1 : -1;
+		return new Date(a.date).getTime() - new Date(b.date).getTime() <= 0 ? 1 : -1;
 	});
 };
 
@@ -80,7 +88,7 @@ Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
 	// Get articles
-	var articles = [];
+	var articles = this.articles = [];
 
 	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
 		var path  = paperpress.directory + '/articles/' + article,
@@ -97,7 +105,21 @@ Paperpress.prototype.attach = function(server) {
 	articles = Paperpress._sortArticles(articles);
 
 	// Add blog routes
-	server.get(this.basePath, function (req, res) {
+	var listHandler = function (req, res) {
+		var page;
+		if(!req.params.page){
+			page = 0;
+		}else{
+			page = req.params.page - 1;
+		}
+
+		var articles = paperpress.getArticlesInPage(page);
+
+		if(!articles.length){
+			res.send(404);
+			return;
+		}
+
 		var renderedHtml = paperpress.multipleTpl.render({
 			static  : paperpress.basePath,
 			baseUrl : paperpress.basePath,
@@ -105,7 +127,10 @@ Paperpress.prototype.attach = function(server) {
 		});
 
 		res.send(renderedHtml);
-	});
+	};
+
+	server.get(this.basePath, listHandler);
+	server.get(this.basePath + '/page/:page', listHandler);
 
 	articles.forEach(function (article) {
 		server.get(paperpress.basePath + '/' + article.path, function(req, res){
