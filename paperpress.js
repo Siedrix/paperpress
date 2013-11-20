@@ -118,19 +118,19 @@ Paperpress.prototype.attach = function(server) {
 	// Get articles
 	var articles = this.articles;
 
-	// fs.readdirSync(this.directory + '/articles').forEach(function (article) {
-	// 	var path  = paperpress.directory + '/articles/' + article,
-	// 		stats = fs.statSync(path);
+	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
+		var path  = paperpress.directory + '/articles/' + article,
+			stats = fs.statSync(path);
 
-	// 	if(stats.isDirectory()){
-	// 		articles.push(paperpress._directoryToArticle({
-	// 			path  : path,
-	// 			stats : stats,
-	// 		}));
-	// 	}
-	// });
+		if(stats.isDirectory()){
+			articles.push(paperpress._directoryToArticle({
+				path  : path,
+				stats : stats,
+			}));
+		}
+	});
 
-	articles = Paperpress._sortArticles(articles);
+	articles = paperpress._sortArticles(articles);
 
 	// Add blog routes
 	var listHandler = function (req, res) {
@@ -179,7 +179,7 @@ Paperpress.prototype.attach = function(server) {
 			stats = fs.statSync(path);
 
 		if(stats.isDirectory()){
-			pages.push(Paperpress._directoryToPage({
+			pages.push(paperpress._directoryToPage({
 				path  : path,
 				stats : stats,
 			}));

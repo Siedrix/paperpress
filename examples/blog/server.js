@@ -7,7 +7,7 @@ var blog = new Paperpress({
 	directory : 'static',
 	basePath  : '/blog',
 	pagesPath : '',
-	articlesPerPage : 2
+	articlesPerPage : 5
 });
 
 blog.attach(server);
