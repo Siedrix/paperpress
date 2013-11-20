@@ -28,7 +28,7 @@ var Paperpress = function (config) {
 	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
 	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
 
-	var description = fs.readFileSync('./' + config.directory + '/blog-description.json', 'utf8');
+	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
 	this.blogDescription = JSON.parse(description);
 };
 
