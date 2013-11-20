@@ -22,6 +22,8 @@ var Paperpress = function (config) {
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
+	this.articles = [];
+	this.pages = [];
 
 	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
 	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
@@ -30,17 +32,21 @@ var Paperpress = function (config) {
 	this.blogDescription = JSON.parse(description);
 };
 
-Paperpress._titleToSlug = function (title) {
+/****************************************/
+/********** Private Functions ***********/
+/****************************************/
+Paperpress.prototype._titleToSlug = function (title) {
 	var slug = title.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'');
 
 	return slug;
 };
 
 Paperpress.prototype._directoryToArticle = function (directory) {
+	var paperpress = this;
 	var article = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
 
 	if(!article.path){
-		article.path = Paperpress._titleToSlug(article.title);
+		article.path = paperpress._titleToSlug(article.title);
 	}
 
 	article.uri = this.basePath + '/' + article.path;
@@ -56,13 +62,7 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 	return article;
 };
 
-Paperpress.prototype.getArticlesInPage = function (page) {
-	var articles = _.clone(this.articles);
-
-	return articles.splice(page * this.articlesPerPage, this.articlesPerPage);
-};
-
-Paperpress._directoryToPage = function (directory) {
+Paperpress.prototype._directoryToPage = function (directory) {
 	var page = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
 
 	if(!page.path){
@@ -79,29 +79,56 @@ Paperpress._directoryToPage = function (directory) {
 	return page;
 };
 
-Paperpress._sortArticles = function (article) {
+Paperpress.prototype._sortArticles = function (article) {
 	return article.sort(function (a, b) {
 		return new Date(a.date).getTime() - new Date(b.date).getTime() <= 0 ? 1 : -1;
 	});
 };
 
-Paperpress.prototype.attach = function(server) {
+/****************************************/
+/********** Public Functions ************/
+/****************************************/
+Paperpress.prototype.readArticles = function () {
 	var paperpress = this;
-
-	// Get articles
-	var articles = this.articles = [];
 
 	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
 		var path  = paperpress.directory + '/articles/' + article,
 			stats = fs.statSync(path);
 
 		if(stats.isDirectory()){
-			articles.push(paperpress._directoryToArticle({
+			paperpress.articles.push(paperpress._directoryToArticle({
 				path  : path,
 				stats : stats,
 			}));
 		}
 	});
+};
+
+Paperpress.prototype.readPages = function () {};
+
+Paperpress.prototype.getArticlesInPage = function (page) {
+	var articles = _.clone(this.articles);
+
+	return articles.splice(page * this.articlesPerPage, this.articlesPerPage);
+};
+
+Paperpress.prototype.attach = function(server) {
+	var paperpress = this;
+
+	// Get articles
+	var articles = this.articles;
+
+	// fs.readdirSync(this.directory + '/articles').forEach(function (article) {
+	// 	var path  = paperpress.directory + '/articles/' + article,
+	// 		stats = fs.statSync(path);
+
+	// 	if(stats.isDirectory()){
+	// 		articles.push(paperpress._directoryToArticle({
+	// 			path  : path,
+	// 			stats : stats,
+	// 		}));
+	// 	}
+	// });
 
 	articles = Paperpress._sortArticles(articles);
 
