@@ -1,9 +1,9 @@
-var fs = require("fs"),
-	md = require("node-markdown").Markdown,
-	swig = require("swig"),
-	express = require("express"),
-	Feed = require("feed"),
-	_ = require("underscore");
+var fs = require('fs'),
+	md = require('node-markdown').Markdown,
+	swig = require('swig'),
+	express = require('express'),
+	Feed = require('feed'),
+	_ = require('underscore');
 
 swig.init({
 	allowErrors: false,
@@ -11,22 +11,22 @@ swig.init({
 	cache: true,
 	encoding: 'utf8',
 	filters: {},
-	root: "./",
+	root: './',
 	tags: {},
 	extensions: {},
 	tzOffset: 0
 });
 
 var Paperpress = function (config) {
-	this.directory   = config.directory || "static";
+	this.directory   = config.directory || 'static';
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
 	this.articles = [];
 	this.pages = [];
 
-	this.singleTpl = swig.compileFile(this.directory + "/layouts/single.html");
-	this.multipleTpl = swig.compileFile(this.directory + "/layouts/multiple.html");
+	this.singleTpl = swig.compileFile(this.directory + '/layouts/single.html');
+	this.multipleTpl = swig.compileFile(this.directory + '/layouts/multiple.html');
 
 	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
 	this.blogDescription = JSON.parse(description);
@@ -52,12 +52,16 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 	article.uri = this.basePath + '/' + article.path;
 	article.date = new Date(article.date);
 
-	var content = fs.readFileSync(directory.path + '/content.md').toString();
+	if(article.contentType === 'html'){
+		article.content = fs.readFileSync(directory.path + '/content.html').toString();
+	}else{
+		var content = fs.readFileSync(directory.path + '/content.md').toString();
 
-	article.content = md(content, true, "h1|h2|h3|h4|p|strong|span|a", {
-		"a":"href",			// 'href' for links
-		"*":"title|style"	// 'title' and 'style' for all
-	});
+		article.content = md(content, true, 'h1|h2|h3|h4|p|strong|span|a', {
+			'a':'href',			// 'href' for links
+			'*':'title|style'	// 'title' and 'style' for all
+		});
+	}
 
 	return article;
 };
@@ -71,9 +75,9 @@ Paperpress.prototype._directoryToPage = function (directory) {
 
 	var content = fs.readFileSync(directory.path + '/content.md').toString();
 
-	page.content = md(content, true, "h1|h2|h3|h4|p|strong|span|a", {
-		"a":"href",        // 'href' for links
-		"*":"title|style"  // 'title' and 'style' for all
+	page.content = md(content, true, 'h1|h2|h3|h4|p|strong|span|a', {
+		'a':'href',        // 'href' for links
+		'*':'title|style'  // 'title' and 'style' for all
 	});
 
 	return page;
