@@ -1,6 +1,6 @@
 {
   "name": "paperpress",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "main": "./paperpress",
   "keywords": [
     "express",
@@ -8,11 +8,12 @@
     "publishing"
   ],
   "dependencies": {
-    "node-markdown": "0.1.1",
     "swig": "0.13.5",
     "express": "3.1.0",
     "feed": "~0.2.5",
-    "underscore": "1.4.4"
+    "underscore": "1.4.4",
+    "marked": "~0.3.2",
+    "highlight.js": "~8.0.0"
   },
   "repository": {
     "type": "git",

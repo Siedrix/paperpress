@@ -1,9 +1,10 @@
 var fs = require('fs'),
-	md = require('node-markdown').Markdown,
+	marked = require('marked'),
 	swig = require('swig'),
 	express = require('express'),
 	Feed = require('feed'),
-	_ = require('underscore');
+	_ = require('underscore'),
+	highlighter = require('highlight.js');
 
 swig.init({
 	allowErrors: false,
@@ -15,6 +16,14 @@ swig.init({
 	tags: {},
 	extensions: {},
 	tzOffset: 0
+});
+
+marked.setOptions({
+	highlight: function (code) {
+		var highlighted =highlighter.highlightAuto(code).value;
+
+		return highlighted;
+	}
 });
 
 var Paperpress = function (config) {
@@ -56,11 +65,7 @@ Paperpress.prototype._directoryToArticle = function (directory) {
 		article.content = fs.readFileSync(directory.path + '/content.html').toString();
 	}else{
 		var content = fs.readFileSync(directory.path + '/content.md').toString();
-
-		article.content = md(content, true, 'h1|h2|h3|h4|p|strong|span|a', {
-			'a':'href',			// 'href' for links
-			'*':'title|style'	// 'title' and 'style' for all
-		});
+		article.content = marked(content);
 	}
 
 	return article;
@@ -74,11 +79,7 @@ Paperpress.prototype._directoryToPage = function (directory) {
 	}
 
 	var content = fs.readFileSync(directory.path + '/content.md').toString();
-
-	page.content = md(content, true, 'h1|h2|h3|h4|p|strong|span|a', {
-		'a':'href',        // 'href' for links
-		'*':'title|style'  // 'title' and 'style' for all
-	});
+	page.content = marked(content);
 
 	return page;
 };
@@ -210,7 +211,7 @@ Paperpress.prototype.attach = function(server) {
 		item.link = paperpress.blogDescription.link + item.uri;
 		item.date = new Date(item.date);
 
-		feed.item(item);
+		feed.addItem(item);
 	});
 
 	server.get('/rss', function (req, res) {
