@@ -4,19 +4,8 @@ var fs = require('fs'),
 	express = require('express'),
 	Feed = require('feed'),
 	_ = require('underscore'),
-	highlighter = require('highlight.js');
-
-swig.init({
-	allowErrors: false,
-	autoescape: true,
-	cache: true,
-	encoding: 'utf8',
-	filters: {},
-	root: './',
-	tags: {},
-	extensions: {},
-	tzOffset: 0
-});
+	highlighter = require('highlight.js'),
+	path = require('path');
 
 marked.setOptions({
 	highlight: function (code) {
@@ -28,14 +17,20 @@ marked.setOptions({
 
 var Paperpress = function (config) {
 	this.directory   = config.directory || 'static';
+	this.themePath   = config.themePath || (this.directory + '/layouts');
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
 	this.articles = [];
 	this.pages = [];
 
-	this.singleTpl = swig.compileFile(this.directory + '/layouts/single.html');
-	this.multipleTpl = swig.compileFile(this.directory + '/layouts/multiple.html');
+	swig.setDefaults({ cache: false });
+
+	var themePath = path.join(__dirname, this.themePath);
+
+	this.pageTpl = swig.compileFile(themePath + '/page.html');
+	this.singleTpl = swig.compileFile(themePath + '/single.html');
+	this.multipleTpl = swig.compileFile(themePath + '/multiple.html');
 
 	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
 	this.blogDescription = JSON.parse(description);
@@ -153,7 +148,7 @@ Paperpress.prototype.attach = function(server) {
 			return;
 		}
 
-		var renderedHtml = paperpress.multipleTpl.render({
+		var renderedHtml = paperpress.multipleTpl({
 			static  : paperpress.basePath,
 			baseUrl : paperpress.basePath,
 			articles : articles
@@ -167,7 +162,7 @@ Paperpress.prototype.attach = function(server) {
 
 	articles.forEach(function (article) {
 		server.get(paperpress.basePath + '/' + article.path, function(req, res){
-			var renderedHtml = paperpress.singleTpl.render({
+			var renderedHtml = paperpress.singleTpl({
 				static  : paperpress.basePath,
 				baseUrl : paperpress.basePath,
 				article : article
@@ -193,10 +188,10 @@ Paperpress.prototype.attach = function(server) {
 
 	pages.forEach(function (page) {
 		server.get(paperpress.pagesPath + '/' + page.path, function(req, res){
-			var renderedHtml = paperpress.singleTpl.render({
+			var renderedHtml = paperpress.pageTpl({
 				static  : paperpress.basePath,
 				baseUrl : paperpress.pagesPath,
-				article : page
+				page    : page
 			});
 
 			res.send(renderedHtml);

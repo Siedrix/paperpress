@@ -1,10 +1,11 @@
-var express = require("express"),
-	Paperpress = require("../../paperpress").Paperpress;
+var express = require('express'),
+	Paperpress = require('../../paperpress').Paperpress;
 
 var server = express();
 
 var blog = new Paperpress({
 	directory : 'static',
+	themePath : '/examples/blog/static/layouts',
 	basePath  : '/blog',
 	pagesPath : '',
 	articlesPerPage : 5
