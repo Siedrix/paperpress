@@ -26,7 +26,7 @@ var Paperpress = function (config) {
 
 	swig.setDefaults({ cache: false });
 
-	var themePath = path.join(__dirname, this.themePath);
+	var themePath = path.join(process.cwd(), this.themePath);
 
 	this.pageTpl = swig.compileFile(themePath + '/page.html');
 	this.singleTpl = swig.compileFile(themePath + '/single.html');

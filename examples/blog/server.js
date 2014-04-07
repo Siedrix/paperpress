@@ -5,7 +5,7 @@ var server = express();
 
 var blog = new Paperpress({
 	directory : 'static',
-	themePath : '/examples/blog/static/layouts',
+	themePath : 'static/layouts',
 	basePath  : '/blog',
 	pagesPath : '',
 	articlesPerPage : 5
