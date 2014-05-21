@@ -90,6 +90,7 @@ Paperpress.prototype._sortArticles = function (article) {
 /****************************************/
 Paperpress.prototype.readArticles = function () {
 	var paperpress = this;
+	paperpress.articles = [];
 
 	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
 		var path  = paperpress.directory + '/articles/' + article,
@@ -160,16 +161,21 @@ Paperpress.prototype.attach = function(server) {
 	server.get(this.basePath, listHandler);
 	server.get(this.basePath + '/page/:page', listHandler);
 
-	articles.forEach(function (article) {
-		server.get(paperpress.basePath + '/' + article.path, function(req, res){
-			var renderedHtml = paperpress.singleTpl({
-				static  : paperpress.basePath,
-				baseUrl : paperpress.basePath,
-				article : article
-			});
+	// Attach article base path
+	server.get(paperpress.basePath + '/*', function(req, res){
+		var article = _.find(paperpress.articles, function(item){return item.uri === req.path;});
 
-			res.send(renderedHtml);
+		if(!article){
+			return res.send(404);
+		}
+
+		var renderedHtml = paperpress.singleTpl({
+			static  : paperpress.basePath,
+			baseUrl : paperpress.basePath,
+			article : article
 		});
+
+		res.send(renderedHtml);
 	});
 
 	// Get pages

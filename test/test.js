@@ -1,6 +1,7 @@
 var assert = require('assert'),
 	express = require('express'),
 	Paperpress = require('../paperpress').Paperpress,
+	request = require('supertest'),
 	_ = require('underscore');
 
 var server = express();
@@ -12,6 +13,8 @@ var paperpress = new Paperpress({
 	pagesPath : '/pages',
 	articlesPerPage : 2
 });
+
+paperpress.attach(server);
 
 describe('Paperpress', function(){
 	describe('Init paperpress', function(){
@@ -73,6 +76,47 @@ describe('Paperpress Read Articles', function(){
 
 		it('paperpress should have articles', function () {
 			assert.equal(paperpress.articles.length, 7);
+		});
+	});
+});
+
+describe('Paperpress Read Articles Reload', function(){
+	describe('#paperpress.readArticles()', function(){
+		it('paperpress should have articles', function () {
+			paperpress.directory = 'test/reload';
+			paperpress.readArticles();
+
+			assert.equal(paperpress.articles.length, 8);
+		});
+	});
+});
+
+describe('Paperpress Request Articles', function(){
+	it('#request /blog/five-five', function(done){
+		request(server)
+		.get('/blog/five-five')
+		.expect(200, 'Five Five\n\n<div><p>Five is awesome</p>\n</div>\n')
+		.end(function(err){
+			if (err){
+				console.log(err);
+				return done(err);
+			}
+
+			done();
+		});
+	});
+
+	it('#request /blog/mr-eight', function(done){
+		request(server)
+		.get('/blog/mr-eight')
+		.expect(200, 'Mr Eight\n\n<div><p>Mr Eight is here</p>\n</div>\n')
+		.end(function(err){
+			if (err){
+				console.log(err);
+				return done(err);
+			}
+
+			done();
 		});
 	});
 });
