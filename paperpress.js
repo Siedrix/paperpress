@@ -21,6 +21,7 @@ var Paperpress = function (config) {
 	this.basePath = config.basePath;
 	this.pagesPath = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
+	this.staticPath = config.staticPath || this.basePath;
 	this.articles = [];
 	this.pages = [];
 
@@ -150,7 +151,7 @@ Paperpress.prototype.attach = function(server) {
 		}
 
 		var renderedHtml = paperpress.multipleTpl({
-			static  : paperpress.basePath,
+			static  : paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			articles : articles
 		});
@@ -170,7 +171,7 @@ Paperpress.prototype.attach = function(server) {
 		}
 
 		var renderedHtml = paperpress.singleTpl({
-			static  : paperpress.basePath,
+			static  : paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			article : article
 		});
@@ -195,7 +196,7 @@ Paperpress.prototype.attach = function(server) {
 	pages.forEach(function (page) {
 		server.get(paperpress.pagesPath + '/' + page.path, function(req, res){
 			var renderedHtml = paperpress.pageTpl({
-				static  : paperpress.basePath,
+				static  : paperpress.staticPath,
 				baseUrl : paperpress.pagesPath,
 				page    : page
 			});
