@@ -16,7 +16,7 @@ swig.setDefaults({ cache: false });
 
 var paperpress = new Paperpress({
 	directory : 'test/static',
-	themePath : '/test/static/layouts',
+	themePath : '/test/static/themes/test',
 	basePath  : '/blog',
 	pagesPath : '/pages',
 	articlesPerPage : 2
