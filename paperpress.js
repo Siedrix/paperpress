@@ -176,13 +176,10 @@ Paperpress.prototype.getArticlesInPage = function (page) {
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
-<<<<<<< HEAD
 	// Add static files
 	server.use( '/'+paperpress.staticPath , express.static( process.cwd() + '/' + paperpress.themeStatic ) );
 
 	console.log('attaching paperpress');
-=======
->>>>>>> 16236ed6fc113633a3948fc5508ae8b898a4ee5f
 	server.use(function(req, res, next){
 		res.locals.paperpress = paperpress.buildContext();
 
