@@ -100,12 +100,23 @@ Paperpress.prototype._sortArticles = function (article) {
 /****************************************/
 /********** Public Functions ************/
 /****************************************/
-Paperpress.prototype.buildContext = function() {
+Paperpress.prototype.buildContext = function (locals) {
 	var paperpress = this;
 
-	return {
-		snippets : paperpress.snippets
-	};
+	locals = locals || {};
+
+	locals.snippets = paperpress.snippets;
+	locals.currentPage = locals.currentPage || 0;
+
+	if (locals.currentPage < (paperpress.articles.length - 1)) {
+		locals.nextUrl = paperpress.basePath + '/' + (locals.currentPage + 1);
+	}
+
+	if (locals.currentPage > 0) {
+		locals.prevUrl = paperpress.basePath + '/' + (locals.currentPage - 1);
+	}
+
+	return locals;
 };
 
 Paperpress.prototype.hooks = function(hookName, hook) {
@@ -212,9 +223,10 @@ Paperpress.prototype.attach = function(server) {
 	// Add static files
 	server.use( '/'+paperpress.staticPath , express.static( process.cwd() + '/' + paperpress.themeStatic ) );
 
-	console.log('attaching paperpress');
 	server.use(function(req, res, next){
-		res.locals.paperpress = paperpress.buildContext();
+		res.locals.paperpress = paperpress.buildContext({
+			currentPage: parseInt(req.query.page, 10)
+		});
 
 		next();
 	});

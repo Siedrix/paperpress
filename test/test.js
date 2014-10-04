@@ -10,6 +10,7 @@ var assert = require('assert'),
 /**************** SET UP ****************/
 /****************************************/
 var server = express();
+var agent = request.agent(server);
 
 server.engine('html', swig.renderFile);
 server.set('view engine', 'html');
@@ -168,6 +169,35 @@ describe('Paperpress build context', function(){
 			assert.equal(typeof context, 'object');
 			assert.equal(typeof context.snippets, 'object');
 			assert.equal(typeof context.snippets.header, 'string');
+			assert.equal(typeof context.currentPage, 'number');
+			assert.equal(context.currentPage, 0);
+		});
+		it('Should return context with `currentPage` param', function () {
+			var context = paperpress.buildContext({ currentPage: 10 });
+
+			assert.equal(context.currentPage, 10);
+		});
+		it('context page 0 should have `nextUrl` and should not have `prevUrl`', function () {
+			var context = paperpress.buildContext({ currentPage: 0 });
+
+			assert.equal(typeof context.nextUrl, 'string');
+			assert.equal(context.nextUrl, paperpress.basePath + '/' + (context.currentPage + 1));
+			assert.equal(typeof context.prevUrl, 'undefined');
+		});
+		it('context page 1 should have `prevUrl` and should have `nextUrl`', function () {
+			var context = paperpress.buildContext({ currentPage: 1 });
+
+			assert.equal(typeof context.nextUrl, 'string');
+			assert.equal(context.nextUrl, paperpress.basePath + '/' + (context.currentPage + 1));
+			assert.equal(typeof context.prevUrl, 'string');
+			assert.equal(context.prevUrl, paperpress.basePath + '/' + (context.currentPage - 1));
+		});
+		it('context page 6 should have `prevUrl` and should not have `nextUrl`', function () {
+			var context = paperpress.buildContext({ currentPage: 6 });
+
+			assert.equal(typeof context.nextUrl, 'undefined');
+			assert.equal(typeof context.prevUrl, 'string');
+			assert.equal(context.prevUrl, paperpress.basePath + '/' + (context.currentPage - 1));
 		});
 	});
 });
@@ -183,17 +213,17 @@ describe('Paperpress Snippets', function(){
 		});
 
 		it('getting page with snippet', function(done){
-			request(server)
-			.get('/page-in-express-with-snippet')
-			.expect(200, 'Snippet: <h2 id="this-is-the-header">This is the header</h2>\n')
-			.end(function(err){
-				if (err){
-					console.log(err);
-					return done(err);
-				}
+			agent
+				.get('/page-in-express-with-snippet')
+				.expect(200, 'Snippet: <h2 id="this-is-the-header">This is the header</h2>\n')
+				.end(function(err){
+					if (err){
+						console.log(err);
+						return done(err);
+					}
 
-				done();
-			});
+					done();
+				});
 		});
 	});
 });
@@ -242,7 +272,7 @@ describe('Paperpress Reload', function(){
 
 describe('Paperpress Request Articles', function(){
 	it('#request /blog/five-five', function(done){
-		request(server)
+		agent
 		.get('/blog/five-five')
 		.expect(200, 'Five Five\n\n<div><p>Five is awesome</p>\n</div>\n')
 		.end(function(err){
@@ -256,7 +286,7 @@ describe('Paperpress Request Articles', function(){
 	});
 
 	it('#request /blog/mr-eight', function(done){
-		request(server)
+		agent
 		.get('/blog/mr-eight')
 		.expect(200, 'Mr Eight\n\n<div><p>Mr Eight is here</p>\n</div>\n')
 		.end(function(err){
