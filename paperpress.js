@@ -182,6 +182,17 @@ Paperpress.prototype.readSnippets = function () {
 	});
 };
 
+Paperpress.prototype.readThemeFiles = function () {
+	var paperpress = this;
+
+	var themePath = path.join(process.cwd(), paperpress.themePath);
+
+	paperpress.pageTpl     = swig.compileFile(themePath + '/page.html');
+	paperpress.singleTpl   = swig.compileFile(themePath + '/single.html');
+	paperpress.multipleTpl = swig.compileFile(themePath + '/multiple.html');
+
+};
+
 Paperpress.prototype.getSnippets = function(name){
 	return this.snippets[name];
 };

@@ -201,6 +201,7 @@ describe('Paperpress Snippets', function(){
 describe('Paperpress Reload', function(){
 	before(function () {
 		paperpress.directory = 'test/reload';
+		paperpress.themePath = '/test/reload/themes/reload/layouts';
 	});
 
 	describe('#paperpress.readArticles()', function(){
@@ -218,6 +219,7 @@ describe('Paperpress Reload', function(){
 		});
 	});
 
+
 	describe('#paperpress.readSnippets()', function(){
 		it('paperpress should have new snippets', function () {
 			paperpress.directory = 'test/reload';
@@ -226,6 +228,14 @@ describe('Paperpress Reload', function(){
 			assert.equal( Object.keys(paperpress.snippets).length , 2);
 			assert.equal( typeof paperpress.snippets.header , 'string');
 			assert.equal( typeof paperpress.snippets.footer , 'string');
+		});
+	});
+
+	describe('#paperpress.readThemeFiles()', function(){
+		it('paperpress should have new theme files', function () {
+			paperpress.readThemeFiles();
+			assert.equal( paperpress.pageTpl({'page': { 'title': 'Reloaded'} }) , '<h1>Page: Reloaded</h1>');
+			//assert.equal( typeof paperpress.snippets.footer , 'string');
 		});
 	});
 });
