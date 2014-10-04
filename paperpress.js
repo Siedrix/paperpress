@@ -17,7 +17,9 @@ marked.setOptions({
 
 var Paperpress = function (config) {
 	this.directory   = config.directory || 'static';
-	this.themePath   = config.themePath || (this.directory + '/layouts');
+	this.themeStatic   = config.themePath + '/public';
+	this.themePath   = config.themePath + '/layouts' || (this.directory + '/layouts');
+	this.staticPath = config.staticPath || 'static';
 	this.basePath    = config.basePath;
 	this.pagesPath   = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
@@ -190,9 +192,16 @@ Paperpress.prototype.getArticlesInPage = function (page) {
 	return articles.splice(page * this.articlesPerPage, this.articlesPerPage);
 };
 
+/****************************************/
+/**** Add Paperpress to express *********/
+/****************************************/
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
+	// Add static files
+	server.use( '/'+paperpress.staticPath , express.static( process.cwd() + '/' + paperpress.themeStatic ) );
+
+	console.log('attaching paperpress');
 	server.use(function(req, res, next){
 		res.locals.paperpress = paperpress.buildContext();
 
@@ -226,7 +235,7 @@ Paperpress.prototype.attach = function(server) {
 		}
 
 		var renderedHtml = paperpress.multipleTpl({
-			static  : paperpress.basePath,
+			static  : paperpress.basePath+'/'+paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			articles : articles
 		});
@@ -234,7 +243,7 @@ Paperpress.prototype.attach = function(server) {
 		res.send(renderedHtml);
 	};
 
-	server.get(this.basePath, listHandler);
+	server.get( '/'+this.basePath, listHandler );
 
 	// Attach article base path
 	server.get(paperpress.basePath + '/*', function(req, res){
@@ -245,7 +254,7 @@ Paperpress.prototype.attach = function(server) {
 		}
 
 		var renderedHtml = paperpress.singleTpl({
-			static  : paperpress.basePath,
+			static  : paperpress.basePath+'/'+paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			article : article
 		});
@@ -256,7 +265,7 @@ Paperpress.prototype.attach = function(server) {
 	pages.forEach(function (page) {
 		server.get(paperpress.pagesPath + '/' + page.path, function(req, res){
 			var renderedHtml = paperpress.pageTpl({
-				static  : paperpress.basePath,
+				static  : paperpress.basePath+'/'+paperpress.staticPath,
 				baseUrl : paperpress.pagesPath,
 				page    : page
 			});
@@ -280,9 +289,6 @@ Paperpress.prototype.attach = function(server) {
 		res.set('Content-Type', 'text/xml');
 		res.send(feed.render('rss-2.0'));
 	});
-
-	// Add static files
-	server.use(paperpress.basePath, express.static(paperpress.directory + '/public') );
 };
 
 exports.Paperpress = Paperpress;
