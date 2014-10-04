@@ -177,14 +177,14 @@ describe('Paperpress build context', function(){
 
 			assert.equal(context.currentPage, 10);
 		});
-		it('context page 0 should have `nextUrl` and should not have `prevUrl`', function () {
+		it('context first page should have `nextUrl` and should not have `prevUrl`', function () {
 			var context = paperpress.buildContext({ currentPage: 0 });
 
 			assert.equal(typeof context.nextUrl, 'string');
 			assert.equal(context.nextUrl, paperpress.basePath + '/' + (context.currentPage + 1));
 			assert.equal(typeof context.prevUrl, 'undefined');
 		});
-		it('context page 1 should have `prevUrl` and should have `nextUrl`', function () {
+		it('context second page should have `prevUrl` and should have `nextUrl`', function () {
 			var context = paperpress.buildContext({ currentPage: 1 });
 
 			assert.equal(typeof context.nextUrl, 'string');
@@ -192,8 +192,10 @@ describe('Paperpress build context', function(){
 			assert.equal(typeof context.prevUrl, 'string');
 			assert.equal(context.prevUrl, paperpress.basePath + '/' + (context.currentPage - 1));
 		});
-		it('context page 6 should have `prevUrl` and should not have `nextUrl`', function () {
-			var context = paperpress.buildContext({ currentPage: 6 });
+		it('context last page should have `prevUrl` and should not have `nextUrl`', function () {
+			var context = paperpress.buildContext({
+				currentPage: Math.ceil(paperpress.articles.length / paperpress.articlesPerPage)
+			});
 
 			assert.equal(typeof context.nextUrl, 'undefined');
 			assert.equal(typeof context.prevUrl, 'string');

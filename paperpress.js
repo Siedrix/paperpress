@@ -106,9 +106,10 @@ Paperpress.prototype.buildContext = function (locals) {
 	locals = locals || {};
 
 	locals.snippets = paperpress.snippets;
+	locals.pages = Math.ceil(paperpress.articles.length / paperpress.articlesPerPage);
 	locals.currentPage = locals.currentPage || 0;
 
-	if (locals.currentPage < (paperpress.articles.length - 1)) {
+	if (locals.currentPage < locals.pages) {
 		locals.nextUrl = paperpress.basePath + '/' + (locals.currentPage + 1);
 	}
 
