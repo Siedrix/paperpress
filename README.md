@@ -48,9 +48,8 @@ For scafolding check this [yeoman repo](https://github.com/Siedrix/generator-pap
 
 # Todos
 
-- Snippets
 - Pagination
-- Categorias
+- Categories
 - Exposed article, pages, snipped object
 
 # Nice to haves

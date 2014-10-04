@@ -171,10 +171,7 @@ Paperpress.prototype.getArticlesInPage = function (page) {
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
-	console.log('attaching paperpress');
 	server.use(function(req, res, next){
-		console.log('Adding paperpress context');
-
 		res.locals.paperpress = paperpress.buildContext();
 
 		next();
