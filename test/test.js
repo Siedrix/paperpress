@@ -14,10 +14,6 @@ server.set('view cache', false);
 
 swig.setDefaults({ cache: false });
 
-server.get('/page-in-express-with-snippet', function(req, res){
-	res.render('page-with-snippets');
-});
-
 var paperpress = new Paperpress({
 	directory : 'test/static',
 	themePath : '/test/static/layouts',
@@ -27,6 +23,10 @@ var paperpress = new Paperpress({
 });
 
 paperpress.attach(server);
+
+server.get('/page-in-express-with-snippet', function(req, res){
+	res.render('page-with-snippets');
+});
 
 describe('Paperpress', function(){
 	describe('Init paperpress', function(){
@@ -150,10 +150,18 @@ describe('Paperpress Read Articles Reload', function(){
 
 	describe('#paperpress.readArticles()', function(){
 		it('paperpress should have new pages', function () {
-			paperpress.directory = 'test/reload';
 			paperpress.readPages();
 
 			assert.equal(paperpress.pages.length, 2);
+		});
+	});
+
+	describe('#paperpress.readSnippets()', function(){
+		it('paperpress should have new snippets', function () {
+			paperpress.directory = 'test/reload';
+			paperpress.readSnippets();
+
+			assert.equal( Object.keys(paperpress.snippets).length , 2);
 		});
 	});
 });

@@ -138,7 +138,7 @@ Paperpress.prototype.readPages = function () {
 	});
 };
 
-Paperpress.prototype.readSnippet = function () {
+Paperpress.prototype.readSnippets = function () {
 	var paperpress = this;
 
 	paperpress.snippets = {};
@@ -169,10 +169,11 @@ Paperpress.prototype.getArticlesInPage = function (page) {
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
+	console.log('attaching paperpress');
 	server.use(function(req, res, next){
 		console.log('Adding paperpress context');
 
-		req.locals.paperpress = this;
+		res.locals.paperpress = paperpress.buildContext();
 
 		next();
 	});
@@ -183,7 +184,7 @@ Paperpress.prototype.attach = function(server) {
 
 	this.readArticles();
 	this.readPages();
-	this.readSnippet();
+	this.readSnippets();
 
 	articles = paperpress._sortArticles(articles);
 
@@ -213,7 +214,6 @@ Paperpress.prototype.attach = function(server) {
 	};
 
 	server.get(this.basePath, listHandler);
-	server.get(this.basePath + '/page/:page', listHandler);
 
 	// Attach article base path
 	server.get(paperpress.basePath + '/*', function(req, res){
