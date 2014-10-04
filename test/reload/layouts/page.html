@@ -1,0 +1,9 @@
+{% extends './layout.html' %}
+{% block title %}{{ page.title }}{% endblock %}
+
+{% block content %}
+	<h1>Page: {{ page.title }}</h1>
+	<div>{% autoescape false %}
+		{{ page.content }}
+	{% endautoescape %}</div>
+{% endblock %}

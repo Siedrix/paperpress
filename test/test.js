@@ -2,9 +2,21 @@ var assert = require('assert'),
 	express = require('express'),
 	Paperpress = require('../paperpress').Paperpress,
 	request = require('supertest'),
+	swig = require('swig'),
 	_ = require('underscore');
 
 var server = express();
+
+server.engine('html', swig.renderFile);
+server.set('view engine', 'html');
+server.set('views', __dirname + '/views');
+server.set('view cache', false);
+
+swig.setDefaults({ cache: false });
+
+server.get('/page-in-express-with-snippet', function(req, res){
+	res.render('page-with-snippets');
+});
 
 var paperpress = new Paperpress({
 	directory : 'test/static',
@@ -52,41 +64,96 @@ describe('Paperpress', function(){
 	});
 });
 
-describe.skip('Paperpress Blog Description', function(){
+describe('Paperpress Blog Description', function(){
 	describe('#paperpress.blogDescription', function(){
 		it('paperpress blog description should have this attributes', function(){
-			assert.equal(true , false);
+			assert.deepEqual(paperpress.blogDescription , {
+				'title'       : 'Test Data',
+				'description' : 'This is my personnal feed!',
+				'link'        : 'http://paperpress.me',
+				'copyright'   : 'Copyright © 2013 Siedrix. Beerware',
+				'author': {
+					'name' : 'Daniel Zavala',
+					'email': 'siedrix@gmail.com',
+					'link' : 'https://paperpress.me/'
+				}
+			});
 		});
 	});
 });
 
-describe.skip('Paperpress Read Pages', function(){
+describe('Paperpress Read Pages', function(){
 	describe('#paperpress.readPages()', function(){
-		paperpress.readPages();
-
 		it('paperpress should have pages', function () {
-			assert.equal(paperpress.pages.length > 0, true);
+			assert.equal(paperpress.pages.length, 1);
 		});
 	});
 });
 
 describe('Paperpress Read Articles', function(){
 	describe('#paperpress.readArticles()', function(){
-		paperpress.readArticles();
-
 		it('paperpress should have articles', function () {
 			assert.equal(paperpress.articles.length, 7);
 		});
 	});
 });
 
-describe('Paperpress Read Articles Reload', function(){
-	describe('#paperpress.readArticles()', function(){
-		it('paperpress should have articles', function () {
-			paperpress.directory = 'test/reload';
-			paperpress.readArticles();
+describe('Paperpress build context', function(){
+	describe('#paperpress.buildContext()', function(){
+		it('Should return general context', function () {
+			var context = paperpress.buildContext();
 
+			assert.equal(typeof context, 'object');
+			assert.equal(typeof context.snippets, 'object');
+			assert.equal(typeof context.snippets.header, 'string');
+		});
+	});
+});
+
+describe('Paperpress Snippets', function(){
+	describe('#paperpress.readSnippets()', function(){
+		it('paperpress should have snippets', function () {
+			assert.equal( Object.keys(paperpress.snippets).length , 1);
+		});
+
+		it('get snippets by name', function () {
+			assert.equal(paperpress.getSnippets('header'), '<h2 id="this-is-the-header">This is the header</h2>\n');
+		});
+
+		it('getting page with snippet', function(done){
+			request(server)
+			.get('/page-in-express-with-snippet')
+			.expect(200, 'Snippet: <h2 id="this-is-the-header">This is the header</h2>\n')
+			.end(function(err){
+				if (err){
+					console.log(err);
+					return done(err);
+				}
+
+				done();
+			});
+		});
+	});
+});
+
+describe('Paperpress Read Articles Reload', function(){
+	before(function () {
+		paperpress.directory = 'test/reload';
+	});
+
+	describe('#paperpress.readArticles()', function(){
+		it('paperpress should have new articles', function () {
+			paperpress.readArticles();
 			assert.equal(paperpress.articles.length, 8);
+		});
+	});
+
+	describe('#paperpress.readArticles()', function(){
+		it('paperpress should have new pages', function () {
+			paperpress.directory = 'test/reload';
+			paperpress.readPages();
+
+			assert.equal(paperpress.pages.length, 2);
 		});
 	});
 });

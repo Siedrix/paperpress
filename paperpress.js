@@ -18,18 +18,20 @@ marked.setOptions({
 var Paperpress = function (config) {
 	this.directory   = config.directory || 'static';
 	this.themePath   = config.themePath || (this.directory + '/layouts');
-	this.basePath = config.basePath;
-	this.pagesPath = config.pagesPath;
+	this.basePath    = config.basePath;
+	this.pagesPath   = config.pagesPath;
 	this.articlesPerPage = config.articlesPerPage || 5;
+
 	this.articles = [];
-	this.pages = [];
+	this.pages    = [];
+	this.snippets = {};
 
 	swig.setDefaults({ cache: false });
 
 	var themePath = path.join(process.cwd(), this.themePath);
 
-	this.pageTpl = swig.compileFile(themePath + '/page.html');
-	this.singleTpl = swig.compileFile(themePath + '/single.html');
+	this.pageTpl     = swig.compileFile(themePath + '/page.html');
+	this.singleTpl   = swig.compileFile(themePath + '/single.html');
 	this.multipleTpl = swig.compileFile(themePath + '/multiple.html');
 
 	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
@@ -79,6 +81,12 @@ Paperpress.prototype._directoryToPage = function (directory) {
 	return page;
 };
 
+Paperpress.prototype._fileToSnippet = function (filepath) {
+	var file = fs.readFileSync(filepath).toString();
+
+	return marked(file);
+};
+
 Paperpress.prototype._sortArticles = function (article) {
 	return article.sort(function (a, b) {
 		return new Date(a.date).getTime() - new Date(b.date).getTime() <= 0 ? 1 : -1;
@@ -88,6 +96,14 @@ Paperpress.prototype._sortArticles = function (article) {
 /****************************************/
 /********** Public Functions ************/
 /****************************************/
+Paperpress.prototype.buildContext = function() {
+	var paperpress = this;
+
+	return {
+		snippets : paperpress.snippets
+	};
+};
+
 Paperpress.prototype.readArticles = function () {
 	var paperpress = this;
 	paperpress.articles = [];
@@ -105,7 +121,44 @@ Paperpress.prototype.readArticles = function () {
 	});
 };
 
-Paperpress.prototype.readPages = function () {};
+Paperpress.prototype.readPages = function () {
+	var paperpress = this;
+
+	paperpress.pages = [];
+	fs.readdirSync(this.directory + '/pages').forEach(function (page) {
+		var path  = paperpress.directory + '/pages/' + page,
+			stats = fs.statSync(path);
+
+		if(stats.isDirectory()){
+			paperpress.pages.push(paperpress._directoryToPage({
+				path  : path,
+				stats : stats,
+			}));
+		}
+	});
+};
+
+Paperpress.prototype.readSnippet = function () {
+	var paperpress = this;
+
+	paperpress.snippets = {};
+
+	var snippets = fs.readdirSync(this.directory + '/snippets');
+
+	snippets.forEach(function (article) {
+		var path  = paperpress.directory + '/snippets/' + article,
+			stats = fs.statSync(path),
+			articleName = article.replace('.md', '');
+
+		if(!stats.isDirectory()){
+			paperpress.snippets[articleName] = paperpress._fileToSnippet(path);
+		}
+	});
+};
+
+Paperpress.prototype.getSnippets = function(name){
+	return this.snippets[name];
+};
 
 Paperpress.prototype.getArticlesInPage = function (page) {
 	var articles = _.clone(this.articles);
@@ -116,20 +169,21 @@ Paperpress.prototype.getArticlesInPage = function (page) {
 Paperpress.prototype.attach = function(server) {
 	var paperpress = this;
 
+	server.use(function(req, res, next){
+		console.log('Adding paperpress context');
+
+		req.locals.paperpress = this;
+
+		next();
+	});
+
 	// Get articles
 	var articles = this.articles;
+	var pages = this.pages;
 
-	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
-		var path  = paperpress.directory + '/articles/' + article,
-			stats = fs.statSync(path);
-
-		if(stats.isDirectory()){
-			articles.push(paperpress._directoryToArticle({
-				path  : path,
-				stats : stats,
-			}));
-		}
-	});
+	this.readArticles();
+	this.readPages();
+	this.readSnippet();
 
 	articles = paperpress._sortArticles(articles);
 
@@ -176,20 +230,6 @@ Paperpress.prototype.attach = function(server) {
 		});
 
 		res.send(renderedHtml);
-	});
-
-	// Get pages
-	var pages = [];
-	fs.readdirSync(this.directory + '/pages').forEach(function (article) {
-		var path  = paperpress.directory + '/pages/' + article,
-			stats = fs.statSync(path);
-
-		if(stats.isDirectory()){
-			pages.push(paperpress._directoryToPage({
-				path  : path,
-				stats : stats,
-			}));
-		}
 	});
 
 	pages.forEach(function (page) {

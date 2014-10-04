@@ -1,1 +1,11 @@
-{}
+{
+    "title"       : "Test Data",
+    "description" : "This is my personnal feed!",
+    "link"        : "http://paperpress.me",
+    "copyright"   : "Copyright © 2013 Siedrix. Beerware",
+    "author": {
+        "name" : "Daniel Zavala",
+        "email": "siedrix@gmail.com",
+        "link" : "https://paperpress.me/"
+    }
+}

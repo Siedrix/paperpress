@@ -42,14 +42,16 @@ Then create a directory for you paperpress files. It needs the following directo
 - **info.json** This file needs to have title. Path is optional, will use a slugify version of the title if its not present.
 - **content.md** This is the main content of the article, it should be written in mark up.
 
+# Scafolding
+
+For scafolding check this [yeoman repo](https://github.com/Siedrix/generator-paperpress).
+
 # Todos
 
+- Snippets
 - Pagination
-- Static assets per post
-- Comments
-- Good looking design on example
-- Wordpress to Paperpress script
-- Scafolding
+- Categorias
+- Exposed article, pages, snipped object
 
 # Nice to haves
 
