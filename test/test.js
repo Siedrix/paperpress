@@ -5,6 +5,10 @@ var assert = require('assert'),
 	swig = require('swig'),
 	_ = require('underscore');
 
+
+/****************************************/
+/**************** SET UP ****************/
+/****************************************/
 var server = express();
 
 server.engine('html', swig.renderFile);
@@ -19,7 +23,25 @@ var paperpress = new Paperpress({
 	themePath : '/test/static/layouts',
 	basePath  : '/blog',
 	pagesPath : '/pages',
-	articlesPerPage : 2
+	articlesPerPage : 2,
+	hooks : {
+		readArticles : [function(articles){
+			articles.forEach(function(article){
+				article.bootConfigHook = true;
+			});
+		}],
+		readPages : [function(pages){
+			pages.forEach(function(page){
+				page.bootConfigHook = true;
+			});
+		}]
+	}
+});
+
+paperpress.hooks('readArticles', function(articles){
+	articles.forEach(function(article){
+		article.extraHook = true;
+	});
 });
 
 paperpress.attach(server);
@@ -28,6 +50,10 @@ server.get('/page-in-express-with-snippet', function(req, res){
 	res.render('page-with-snippets');
 });
 
+
+/****************************************/
+/**************** TESTS *****************/
+/****************************************/
 describe('Paperpress', function(){
 	describe('Init paperpress', function(){
 		it('Paperpress shoud be a function', function(){
@@ -62,6 +88,17 @@ describe('Paperpress', function(){
 			assert.equal(typeof paperpress.readPages, 'function');
 		});
 	});
+
+	describe('#paperpress.hooks()', function(){
+		it('paperpress should add hook', function(){
+			assert.equal( paperpress._hooks.fakeHook  , undefined );
+
+			paperpress.hooks('fakeHook', function(){});
+
+			assert.equal( _.isArray( paperpress._hooks.fakeHook ) , true );
+			assert.equal( paperpress._hooks.fakeHook.length , 1 );
+		});
+	});
 });
 
 describe('Paperpress Blog Description', function(){
@@ -88,12 +125,37 @@ describe('Paperpress Read Pages', function(){
 			assert.equal(paperpress.pages.length, 1);
 		});
 	});
+
+	describe('#paperpress.readPages hooks', function(){
+		it('paperpress articles should have bootConfigHooks', function () {
+			var firstPage = paperpress.pages[0];
+			assert.equal(firstPage.bootConfigHook, true);
+		});
+	});
 });
 
 describe('Paperpress Read Articles', function(){
 	describe('#paperpress.readArticles()', function(){
 		it('paperpress should have articles', function () {
 			assert.equal(paperpress.articles.length, 7);
+		});
+	});
+
+	describe('#paperpress.readArticles hooks', function(){
+		it('paperpress articles should have bootConfigHooks', function () {
+			var firstArticle = paperpress.articles[0];
+			assert.equal(firstArticle.bootConfigHook, true);
+
+			var secondArticle = paperpress.articles[1];
+			assert.equal(secondArticle.bootConfigHook, true);
+		});
+		
+		it('paperpress articles should have extraHooks', function () {
+			var firstArticle = paperpress.articles[0];
+			assert.equal(firstArticle.extraHook, true);
+
+			var secondArticle = paperpress.articles[1];
+			assert.equal(secondArticle.extraHook, true);
 		});
 	});
 });
@@ -136,7 +198,7 @@ describe('Paperpress Snippets', function(){
 	});
 });
 
-describe('Paperpress Read Articles Reload', function(){
+describe('Paperpress Reload', function(){
 	before(function () {
 		paperpress.directory = 'test/reload';
 	});
@@ -148,7 +210,7 @@ describe('Paperpress Read Articles Reload', function(){
 		});
 	});
 
-	describe('#paperpress.readArticles()', function(){
+	describe('#paperpress.readPages()', function(){
 		it('paperpress should have new pages', function () {
 			paperpress.readPages();
 

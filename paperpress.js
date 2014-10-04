@@ -26,6 +26,8 @@ var Paperpress = function (config) {
 	this.pages    = [];
 	this.snippets = {};
 
+	this._hooks   = config.hooks || {};
+
 	swig.setDefaults({ cache: false });
 
 	var themePath = path.join(process.cwd(), this.themePath);
@@ -104,6 +106,14 @@ Paperpress.prototype.buildContext = function() {
 	};
 };
 
+Paperpress.prototype.hooks = function(hookName, hook) {
+	if(!this._hooks[hookName]){
+		this._hooks[hookName] = [];
+	}
+
+	this._hooks[hookName].push(hook);
+};
+
 Paperpress.prototype.readArticles = function () {
 	var paperpress = this;
 	paperpress.articles = [];
@@ -117,6 +127,12 @@ Paperpress.prototype.readArticles = function () {
 				path  : path,
 				stats : stats,
 			}));
+		}
+
+		if(paperpress._hooks && paperpress._hooks.readArticles){
+			paperpress._hooks.readArticles.forEach(function(fn){
+				fn(paperpress.articles);
+			});
 		}
 	});
 };
@@ -134,6 +150,12 @@ Paperpress.prototype.readPages = function () {
 				path  : path,
 				stats : stats,
 			}));
+		}
+
+		if(paperpress._hooks && paperpress._hooks.readPages){
+			paperpress._hooks.readPages.forEach(function(fn){
+				fn(paperpress.pages);
+			});
 		}
 	});
 };
