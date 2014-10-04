@@ -162,6 +162,8 @@ describe('Paperpress Read Articles Reload', function(){
 			paperpress.readSnippets();
 
 			assert.equal( Object.keys(paperpress.snippets).length , 2);
+			assert.equal( typeof paperpress.snippets.header , 'string');
+			assert.equal( typeof paperpress.snippets.footer , 'string');
 		});
 	});
 });

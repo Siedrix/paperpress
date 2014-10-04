@@ -146,6 +146,8 @@ Paperpress.prototype.readSnippets = function () {
 	var snippets = fs.readdirSync(this.directory + '/snippets');
 
 	snippets.forEach(function (article) {
+		if(article.indexOf('.') === 0){return;}
+
 		var path  = paperpress.directory + '/snippets/' + article,
 			stats = fs.statSync(path),
 			articleName = article.replace('.md', '');
