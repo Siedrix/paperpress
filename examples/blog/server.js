@@ -3,15 +3,15 @@ var express = require('express'),
 
 var server = express();
 
-var blog = new Paperpress({
+var paperpress = new Paperpress({
 	directory : 'static',
-	themePath : 'static/layouts',
+	themePath : '/static/themes/base',
 	basePath  : '/blog',
 	pagesPath : '',
-	articlesPerPage : 5
+	articlesPerPage : 10
 });
 
-blog.attach(server);
+paperpress.attach(server);
 
 server.get('/', function (req, res) {
 	res.redirect('/blog');
