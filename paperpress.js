@@ -232,13 +232,13 @@ Paperpress.prototype.attach = function(server) {
 		next();
 	});
 
-	// Get articles
-	var articles = this.articles;
-	var pages = this.pages;
-
 	this.readArticles();
 	this.readPages();
 	this.readSnippets();
+
+	// Get articles
+	var articles = this.articles;
+	var pages = this.pages;
 
 	articles = paperpress._sortArticles(articles);
 
@@ -259,7 +259,7 @@ Paperpress.prototype.attach = function(server) {
 		}
 
 		var renderedHtml = paperpress.multipleTpl({
-			static  : paperpress.basePath+'/'+paperpress.staticPath,
+			static  : '/' + paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			articles : articles
 		});
@@ -267,18 +267,18 @@ Paperpress.prototype.attach = function(server) {
 		res.send(renderedHtml);
 	};
 
-	server.get( '/'+this.basePath, listHandler );
+	server.get( this.basePath, listHandler );
 
 	// Attach article base path
 	server.get(paperpress.basePath + '/*', function(req, res){
 		var article = _.find(paperpress.articles, function(item){return item.uri === req.path;});
 
 		if(!article){
-			return res.send(404);
+			return res.status(404).end();
 		}
 
 		var renderedHtml = paperpress.singleTpl({
-			static  : paperpress.basePath+'/'+paperpress.staticPath,
+			static  : '/' + paperpress.staticPath,
 			baseUrl : paperpress.basePath,
 			article : article
 		});
@@ -289,7 +289,7 @@ Paperpress.prototype.attach = function(server) {
 	pages.forEach(function (page) {
 		server.get(paperpress.pagesPath + '/' + page.path, function(req, res){
 			var renderedHtml = paperpress.pageTpl({
-				static  : paperpress.basePath+'/'+paperpress.staticPath,
+				static  : '/' + paperpress.staticPath,
 				baseUrl : paperpress.pagesPath,
 				page    : page
 			});
