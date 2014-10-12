@@ -32,11 +32,7 @@ var Paperpress = function (config) {
 
 	swig.setDefaults({ cache: false });
 
-	var themePath = path.join(process.cwd(), this.themePath);
-
-	this.pageTpl     = swig.compileFile(themePath + '/page.html');
-	this.singleTpl   = swig.compileFile(themePath + '/single.html');
-	this.multipleTpl = swig.compileFile(themePath + '/multiple.html');
+	this.readThemeFiles();
 
 	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
 	this.blogDescription = JSON.parse(description);
