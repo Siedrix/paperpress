@@ -80,6 +80,7 @@ describe('Paperpress', function(){
 			assert.equal(typeof paperpress._sortArticles, 'function');
 			assert.equal(typeof paperpress._directoryToPage, 'function');
 			assert.equal(typeof paperpress._directoryToArticle, 'function');
+			assert.equal(typeof paperpress._readdirexistsSync, 'function');
 		});
 
 		it('paperpress should have the next set of public function', function () {

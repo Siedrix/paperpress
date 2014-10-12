@@ -32,11 +32,7 @@ var Paperpress = function (config) {
 
 	swig.setDefaults({ cache: false });
 
-	var themePath = path.join(process.cwd(), this.themePath);
-
-	this.pageTpl     = swig.compileFile(themePath + '/page.html');
-	this.singleTpl   = swig.compileFile(themePath + '/single.html');
-	this.multipleTpl = swig.compileFile(themePath + '/multiple.html');
+	this.readThemeFiles();
 
 	var description = fs.readFileSync('./' + config.directory + '/feed-description.json', 'utf8');
 	this.blogDescription = JSON.parse(description);
@@ -97,6 +93,16 @@ Paperpress.prototype._sortArticles = function (article) {
 	});
 };
 
+Paperpress.prototype._readdirexistsSync = function (path) {
+	var result = [];
+
+	if (fs.existsSync(path)) {
+		result = fs.readdirSync(path);
+	}
+
+	return result;
+};
+
 /****************************************/
 /********** Public Functions ************/
 /****************************************/
@@ -130,9 +136,12 @@ Paperpress.prototype.hooks = function(hookName, hook) {
 
 Paperpress.prototype.readArticles = function () {
 	var paperpress = this;
+
 	paperpress.articles = [];
 
-	fs.readdirSync(this.directory + '/articles').forEach(function (article) {
+	var articles = this._readdirexistsSync(this.directory + '/articles');
+
+	articles.forEach(function (article) {
 		var path  = paperpress.directory + '/articles/' + article,
 			stats = fs.statSync(path);
 
@@ -155,7 +164,10 @@ Paperpress.prototype.readPages = function () {
 	var paperpress = this;
 
 	paperpress.pages = [];
-	fs.readdirSync(this.directory + '/pages').forEach(function (page) {
+
+	var pages = this._readdirexistsSync(this.directory + '/pages');
+
+	pages.forEach(function (page) {
 		var path  = paperpress.directory + '/pages/' + page,
 			stats = fs.statSync(path);
 
@@ -179,7 +191,7 @@ Paperpress.prototype.readSnippets = function () {
 
 	paperpress.snippets = {};
 
-	var snippets = fs.readdirSync(this.directory + '/snippets');
+	var snippets = this._readdirexistsSync(this.directory + '/snippets');
 
 	snippets.forEach(function (article) {
 		if(article.indexOf('.') === 0){return;}
