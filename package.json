@@ -1,6 +1,6 @@
 {
   "name": "paperpress",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "main": "./paperpress",
   "keywords": [
     "express",
