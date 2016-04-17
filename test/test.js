@@ -1,55 +1,15 @@
 var assert = require('assert'),
-	express = require('express'),
 	Paperpress = require('../paperpress').Paperpress,
-	request = require('supertest'),
-	swig = require('swig'),
 	_ = require('underscore');
 
 
 /****************************************/
 /**************** SET UP ****************/
 /****************************************/
-var server = express();
-var agent = request.agent(server);
-
-server.engine('html', swig.renderFile);
-server.set('view engine', 'html');
-server.set('views', __dirname + '/views');
-server.set('view cache', false);
-
-swig.setDefaults({ cache: false });
-
-var paperpress = new Paperpress({
-	directory : 'test/static',
-	themePath : '/test/static/themes/test',
-	basePath  : '/blog',
-	pagesPath : '/pages',
-	articlesPerPage : 2,
-	hooks : {
-		readArticles : [function(articles){
-			articles.forEach(function(article){
-				article.bootConfigHook = true;
-			});
-		}],
-		readPages : [function(pages){
-			pages.forEach(function(page){
-				page.bootConfigHook = true;
-			});
-		}]
-	}
-});
-
-paperpress.hooks('readArticles', function(articles){
-	articles.forEach(function(article){
-		article.extraHook = true;
-	});
-});
-
-paperpress.attach(server);
-
-server.get('/page-in-express-with-snippet', function(req, res){
-	res.render('page-with-snippets');
-});
+var paperpressBaseConfig = {
+	baseDirectory : 'test/static',
+	uriPrefix  : '/blog'
+};
 
 
 /****************************************/
@@ -62,281 +22,158 @@ describe('Paperpress', function(){
 		});
 
 		it('paperpress shoud be an object with articles, pages and other config elements', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
 			assert.equal(typeof paperpress, 'object');
-			assert.equal(typeof paperpress.blogDescription , 'object');
 
-			assert.equal(_.isArray(paperpress.articles) , true);
-			assert.equal(_.isArray(paperpress.pages) , true);
-
-			assert.equal(paperpress.basePath, '/blog');
-			assert.equal(paperpress.pagesPath, '/pages');
-			assert.equal(paperpress.directory, 'test/static');
-
-			assert.equal(paperpress.articlesPerPage, 2);
+			assert.equal(_.isArray(paperpress.items) , true);
+			assert.equal(paperpress.baseDirectory, 'test/static');
 		});
 
 		it('paperpress should have the next set of private function', function () {
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			assert.equal(typeof paperpress._getCollections, 'function');
 			assert.equal(typeof paperpress._titleToSlug, 'function');
-			assert.equal(typeof paperpress._sortArticles, 'function');
-			assert.equal(typeof paperpress._directoryToPage, 'function');
-			assert.equal(typeof paperpress._directoryToArticle, 'function');
+			assert.equal(typeof paperpress._sortByDate, 'function');
+			assert.equal(typeof paperpress._directoryToItem, 'function');
+			assert.equal(typeof paperpress._fileToItem, 'function');
+			assert.equal(typeof paperpress._loadCollection, 'function');
 		});
 
 		it('paperpress should have the next set of public function', function () {
-			assert.equal(typeof paperpress.attach, 'function');
-			assert.equal(typeof paperpress.getArticlesInPage, 'function');
-			assert.equal(typeof paperpress.readArticles, 'function');
-			assert.equal(typeof paperpress.readPages, 'function');
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			assert.equal(typeof paperpress.getCollection, 'function');
+			assert.equal(typeof paperpress.load, 'function');
+			assert.equal(typeof paperpress.addHook, 'function');
 		});
 	});
 
 	describe('#paperpress.hooks()', function(){
 		it('paperpress should add hook', function(){
-			assert.equal( paperpress._hooks.fakeHook  , undefined );
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			assert.equal( _.isArray( paperpress._hooks ) , true );
+			assert.equal( paperpress._hooks.length , 0 );
 
-			paperpress.hooks('fakeHook', function(){});
+			paperpress.addHook(function(){});
 
-			assert.equal( _.isArray( paperpress._hooks.fakeHook ) , true );
-			assert.equal( paperpress._hooks.fakeHook.length , 1 );
-		});
-	});
-});
-
-describe('Paperpress Blog Description', function(){
-	describe('#paperpress.blogDescription', function(){
-		it('paperpress blog description should have this attributes', function(){
-			assert.deepEqual(paperpress.blogDescription , {
-				'title'       : 'Test Data',
-				'description' : 'This is my personnal feed!',
-				'link'        : 'http://paperpress.me',
-				'copyright'   : 'Copyright © 2013 Siedrix. Beerware',
-				'author': {
-					'name' : 'Daniel Zavala',
-					'email': 'siedrix@gmail.com',
-					'link' : 'https://paperpress.me/'
-				}
-			});
-		});
-	});
-});
-
-describe('Paperpress Read Pages', function(){
-	describe('#paperpress.readPages()', function(){
-		it('paperpress should have pages', function () {
-			assert.equal(paperpress.pages.length, 1);
+			assert.equal( _.isArray( paperpress._hooks ) , true );
+			assert.equal( paperpress._hooks.length , 1 );
 		});
 	});
 
-	describe('#paperpress.readPages hooks', function(){
-		it('paperpress articles should have bootConfigHooks', function () {
-			var firstPage = paperpress.pages[0];
-			assert.equal(firstPage.bootConfigHook, true);
-		});
-	});
-});
+	describe('#paperpress._getCollections()', function(){
+		it('paperpress should get main folders', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			var collections = paperpress._getCollections()
 
-describe('Paperpress Read Articles', function(){
-	describe('#paperpress.readArticles()', function(){
-		it('paperpress should have articles', function () {
-			assert.equal(paperpress.articles.length, 7);
+			assert.equal( _.isArray( collections ) , true );
+			assert.equal( collections.length , 3 );
+			assert.deepEqual( collections, [ 'articles', 'pages', 'snippets' ])
 		});
 	});
 
-	describe('#paperpress.readArticles hooks', function(){
-		it('paperpress articles should have bootConfigHooks', function () {
-			var firstArticle = paperpress.articles[0];
-			assert.equal(firstArticle.bootConfigHook, true);
+	describe('#paperpress._loadCollection()', function(){
+		it('paperpress should get collection into items array', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress._loadCollection('articles')
 
-			var secondArticle = paperpress.articles[1];
-			assert.equal(secondArticle.bootConfigHook, true);
-		});
-		
-		it('paperpress articles should have extraHooks', function () {
-			var firstArticle = paperpress.articles[0];
-			assert.equal(firstArticle.extraHook, true);
-
-			var secondArticle = paperpress.articles[1];
-			assert.equal(secondArticle.extraHook, true);
-		});
-	});
-});
-
-describe('Paperpress build context', function(){
-	describe('#paperpress.buildContext()', function(){
-		it('Should return general context', function () {
-			var context = paperpress.buildContext();
-
-			assert.equal(typeof context, 'object');
-			assert.equal(typeof context.snippets, 'object');
-			assert.equal(typeof context.snippets.header, 'string');
-			assert.equal(typeof context.currentPage, 'number');
-			assert.equal(context.currentPage, 0);
-		});
-		it('Should return context with `currentPage` param', function () {
-			var context = paperpress.buildContext({ currentPage: 10 });
-
-			assert.equal(context.currentPage, 10);
-		});
-		it('context first page should have `nextUrl` and should not have `prevUrl`', function () {
-			var context = paperpress.buildContext({ currentPage: 0 });
-
-			assert.equal(typeof context.nextUrl, 'string');
-			assert.equal(context.nextUrl, paperpress.basePath + '/' + (context.currentPage + 1));
-			assert.equal(typeof context.prevUrl, 'undefined');
-		});
-		it('context second page should have `prevUrl` and should have `nextUrl`', function () {
-			var context = paperpress.buildContext({ currentPage: 1 });
-
-			assert.equal(typeof context.nextUrl, 'string');
-			assert.equal(context.nextUrl, paperpress.basePath + '/' + (context.currentPage + 1));
-			assert.equal(typeof context.prevUrl, 'string');
-			assert.equal(context.prevUrl, paperpress.basePath + '/' + (context.currentPage - 1));
-		});
-		it('context last page should have `prevUrl` and should not have `nextUrl`', function () {
-			var context = paperpress.buildContext({
-				currentPage: Math.ceil(paperpress.articles.length / paperpress.articlesPerPage)
-			});
-
-			assert.equal(typeof context.nextUrl, 'undefined');
-			assert.equal(typeof context.prevUrl, 'string');
-			assert.equal(context.prevUrl, paperpress.basePath + '/' + (context.currentPage - 1));
-		});
-	});
-});
-
-describe('Paperpress Snippets', function(){
-	describe('#paperpress.readSnippets()', function(){
-		it('paperpress should have snippets', function () {
-			assert.equal( Object.keys(paperpress.snippets).length , 1);
+			assert.equal( _.isArray( paperpress.items ) , true );
+			assert.equal( paperpress.items.length , 7 );
 		});
 
-		it('get snippets by name', function () {
-			assert.equal(paperpress.getSnippets('header'), '<h2 id="this-is-the-header">This is the header</h2>\n');
-		});
+		it('paperpress should get collection into items array with out repetition', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress._loadCollection('articles')
+			paperpress._loadCollection('articles')
 
-		it('getting page with snippet', function(done){
-			agent
-				.get('/page-in-express-with-snippet')
-				.expect(200, 'Snippet: <h2 id="this-is-the-header">This is the header</h2>\n')
-				.end(function(err){
-					if (err){
-						console.log(err);
-						return done(err);
-					}
+			assert.equal( _.isArray( paperpress.items ) , true )
+			assert.equal( paperpress.items.length , 7 )
+		})
 
-					done();
-				});
-		});
-	});
-});
+		it('paperpress should get collection into items array running the hooks', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress.addHook(function(item){
+				item.hookRunning = true
+			})
+			paperpress.addHook(function(item){
+				item.secondHookRunning = true
+			})			
+			paperpress._loadCollection('articles')
 
-describe('Paperpress Reload', function(){
-	before(function () {
-		paperpress.directory = 'test/reload';
-		paperpress.themePath = '/test/reload/themes/reload/layouts';
-	});
+			assert.equal( _.isArray( paperpress.items ) , true )
+			assert.equal( paperpress.items.length , 7 )
+			assert.equal( paperpress.items[0].hookRunning , true )
+			assert.equal( paperpress.items[0].secondHookRunning , true )
+		})
+	})
 
-	describe('#paperpress.readArticles()', function(){
-		it('paperpress should have new articles', function () {
-			paperpress.readArticles();
-			assert.equal(paperpress.articles.length, 8);
-		});
-	});
+	describe('#paperpress.load()', function(){
+		it('paperpress should load all collections', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress.load()
 
-	describe('#paperpress.readPages()', function(){
-		it('paperpress should have new pages', function () {
-			paperpress.readPages();
+			assert.equal( _.isArray( paperpress.items ) , true )
+			assert.equal( paperpress.items.length , 9 )
+		})
+	})
 
-			assert.equal(paperpress.pages.length, 2);
-		});
-	});
+	describe('#paperpress.getCollection()', function(){
+		it('paperpress should get collection into items array running the hooks', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress.load()
 
+			var articles = paperpress.getCollection('articles')
+			assert.equal( _.isArray( articles ) , true )
+			assert.equal( articles.length , 7 )
 
-	describe('#paperpress.readSnippets()', function(){
-		it('paperpress should have new snippets', function () {
-			paperpress.directory = 'test/reload';
-			paperpress.readSnippets();
+			var pages = paperpress.getCollection('pages')
+			assert.equal( _.isArray( pages ) , true )
+			assert.equal( pages.length , 1 )
 
-			assert.equal( Object.keys(paperpress.snippets).length , 2);
-			assert.equal( typeof paperpress.snippets.header , 'string');
-			assert.equal( typeof paperpress.snippets.footer , 'string');
-		});
-	});
+			var snippets = paperpress.getCollection('snippets')
+			assert.equal( _.isArray( snippets ) , true )
+			assert.equal( snippets.length , 1 )
+		})
+	})
+})
 
-	describe('#paperpress.readThemeFiles()', function(){
-		it('paperpress should have new theme files', function () {
-			paperpress.readThemeFiles();
-			assert.equal( paperpress.pageTpl({'page': { 'title': 'Reloaded'} }) , '<h1>Page: Reloaded</h1>');
-			//assert.equal( typeof paperpress.snippets.footer , 'string');
-		});
-	});
-});
+describe('Paperpress items', function(){
+	it('#paperpress items urls', function(){
+		var paperpress= new Paperpress({
+			baseDirectory : 'test/static'
+		})
+		paperpress.load()
+		var article = paperpress.getCollection('articles')[0]
 
-describe('Paperpress Request Articles', function(){
-	it('#request /blog/five-five', function(done){
-		agent
-		.get('/blog/five-five')
-		.expect(200, 'Five Five\n\n<div><p>Five is awesome</p>\n</div>\n')
-		.end(function(err){
-			if (err){
-				console.log(err);
-				return done(err);
-			}
+		assert.equal( article.slug , 'after-five-comes-six' )
+		assert.equal( article.sugestedUri , '/articles/after-five-comes-six' )
+	})
 
-			done();
-		});
-	});
+	it('#paperpress items urls with prefix', function(){
+		var paperpress= new Paperpress(paperpressBaseConfig)
+		paperpress.load()
 
-	it('#request /blog/mr-eight', function(done){
-		agent
-		.get('/blog/mr-eight')
-		.expect(200, 'Mr Eight\n\n<div><p>Mr Eight is here</p>\n</div>\n')
-		.end(function(err){
-			if (err){
-				console.log(err);
-				return done(err);
-			}
+		var article = paperpress.getCollection('articles')[0]
 
-			done();
-		});
-	});
-});
+		assert.equal( article.slug , 'after-five-comes-six' )
+		assert.equal( article.sugestedUri , '/blog/articles/after-five-comes-six' )
+	})
 
-describe.skip('Paperpress getArticlesInPage', function(){
-	describe('#paperpress.getArticlesInPage() if 2 per page', function(){
-		it('getArticlesInPage for page 1', function(){
-			assert.equal(true , false);
-		});
+	it('#paperpress single file items', function(){
+		paperpress= new Paperpress(paperpressBaseConfig)
+		paperpress.load()
 
-		it('getArticlesInPage for page 2', function(){
-			assert.equal(true , false);
-		});
+		var snippet = paperpress.getCollection('snippets')[0]
 
-		it('getArticlesInPage for page 3', function(){
-			assert.equal(true , false);
-		});
+		assert.deepEqual(snippet, {
+			type: 'snippets',
+			title: 'header',
+			slug: "header",
+			sugestedUri: "/blog/snippets/header",
+  			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
+		})
+	})
+})
 
-		it('getArticlesInPage for page 4', function(){
-			assert.equal(true , false);
-		});
+describe('Paperpress reload', function(){})
 
-		it('getArticlesInPage for page 5', function(){
-			assert.equal(true , false);
-		});
-	});
-
-	describe('#paperpress.getArticlesInPage() if 5 per page', function(){
-		it('getArticlesInPage for page 1', function(){
-			assert.equal(true , false);
-		});
-
-		it('getArticlesInPage for page 2', function(){
-			assert.equal(true , false);
-		});
-
-		it('getArticlesInPage for page 3', function(){
-			assert.equal(true , false);
-		});
-	});
-});
-
+describe('Paperpress helpers', function(){})
