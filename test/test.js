@@ -174,6 +174,67 @@ describe('Paperpress items', function(){
 	})
 })
 
-describe('Paperpress reload', function(){})
+describe('Paperpress reload', function(){
+	it('should load new items', function(){
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var articles = paperpress.getCollection('articles')
+		assert.equal( _.isArray( articles ) , true )
+		assert.equal( articles.length , 7 )
+
+		var pages = paperpress.getCollection('pages')
+		assert.equal( _.isArray( pages ) , true )
+		assert.equal( pages.length , 1 )
+
+		var snippets = paperpress.getCollection('snippets')
+		assert.equal( _.isArray( snippets ) , true )
+		assert.equal( snippets.length , 1 )
+
+		paperpress.baseDirectory = 'test/reload'
+		paperpress.load()
+
+		var articles = paperpress.getCollection('articles')
+		assert.equal( _.isArray( articles ) , true )
+		assert.equal( articles.length , 8 )
+
+		var pages = paperpress.getCollection('pages')
+		assert.equal( _.isArray( pages ) , true )
+		assert.equal( pages.length , 2 )
+
+		var snippets = paperpress.getCollection('snippets')
+		assert.equal( _.isArray( snippets ) , true )
+		assert.equal( snippets.length , 2 )
+	})
+
+	it('should update items', function(){
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'lucky-seven'})
+		assert.equal( article.description , undefined )
+
+		paperpress.baseDirectory = 'test/reload'
+		paperpress.load()
+		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'lucky-seven'})
+		assert.equal( article.description , 'This articles has a description now')
+	})
+
+	it('should load new collections', function(){
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var shortStories = paperpress.getCollection('short-stories')
+		assert.equal( _.isArray( shortStories ) , true )
+		assert.equal( shortStories.length , 0 )
+
+		paperpress.baseDirectory = 'test/reload'
+		paperpress.load()
+
+		var shortStories = paperpress.getCollection('short-stories')
+		assert.equal( _.isArray( shortStories ) , true )
+		assert.equal( shortStories.length , 1 )
+	})
+})
 
 describe('Paperpress helpers', function(){})
