@@ -1,11 +1,7 @@
 var fs = require('fs'),
 	marked = require('marked'),
-	swig = require('swig'),
-	express = require('express'),
-	Feed = require('feed'),
-	_ = require('underscore'),
-	highlighter = require('highlight.js'),
-	path = require('path');
+	path = require('path'),
+	highlighter = require('highlight.js');
 
 marked.setOptions({
 	highlight: function (code) {
@@ -77,7 +73,7 @@ Paperpress.prototype._fileToItem = function(file){
 	var sugestedUri = '/' + file.collectionName +'/' + slug
 	if(this.uriPrefix){
 		sugestedUri = this.uriPrefix + sugestedUri
-	}	
+	}
 
 	return {
 		title: name,
@@ -138,8 +134,6 @@ Paperpress.prototype.getCollection = function(collectionName) {
 	})
 }
 Paperpress.prototype.load = function() {
-	var self = this
-
 	var collections = this._getCollections()
 
 	collections.forEach((collection) => {
