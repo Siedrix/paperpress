@@ -123,8 +123,8 @@ Paperpress.prototype._loadCollection = function (collectionName) {
 	})
 }
 
-Paperpress.prototype._sortByDate = function (article) {
-	return article.sort(function (a, b) {
+Paperpress.prototype._sortByDate = function (items) {
+	return items.sort(function (a, b) {
 		return new Date(a.date).getTime() - new Date(b.date).getTime() <= 0 ? 1 : -1
 	})
 }
@@ -133,9 +133,11 @@ Paperpress.prototype._sortByDate = function (article) {
 /********** Public Functions ************/
 /****************************************/
 Paperpress.prototype.getCollection = function(collectionName) {
-	return this.items.filter((item) => {
+	var collection = this.items.filter((item) => {
 		return item.type === collectionName
 	})
+
+	return this._sortByDate(collection)
 }
 Paperpress.prototype.load = function() {
 	var self = this
@@ -148,7 +150,23 @@ Paperpress.prototype.load = function() {
 }
 
 Paperpress.prototype.addHook = function(hook) {
-	this._hooks.push(hook);
+	this._hooks.push(hook)
+}
+/****************************************/
+/********** Helpers Functions ***********/
+/****************************************/
+Paperpress.helpers = {}
+Paperpress.helpers.createFeed = function(description, items){
+	var feed = new Feed(description)
+
+	items.forEach(function (item) {
+		item.link = description.link + item.sugestedUri
+		item.date = new Date(item.date)
+
+		feed.addItem(item)
+	});
+
+	return feed
 }
 
 exports.Paperpress = Paperpress;
