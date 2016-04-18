@@ -1,7 +1,5 @@
 var fs = require('fs'),
 	marked = require('marked'),
-	swig = require('swig'),
-	express = require('express'),
 	Feed = require('feed'),
 	_ = require('underscore'),
 	highlighter = require('highlight.js'),

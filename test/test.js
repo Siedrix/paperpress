@@ -142,7 +142,7 @@ describe('Paperpress items', function(){
 			baseDirectory : 'test/static'
 		})
 		paperpress.load()
-		var article = paperpress.getCollection('articles')[0]
+		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug , 'after-five-comes-six' )
 		assert.equal( article.sugestedUri , '/articles/after-five-comes-six' )
@@ -152,7 +152,7 @@ describe('Paperpress items', function(){
 		var paperpress= new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 
-		var article = paperpress.getCollection('articles')[0]
+		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug , 'after-five-comes-six' )
 		assert.equal( article.sugestedUri , '/blog/articles/after-five-comes-six' )

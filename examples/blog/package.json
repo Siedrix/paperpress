@@ -1,7 +1,7 @@
 {
-	"name"    : "paperpress-blog-example",
-	"version" : "0.0.1",
-	"dependencies": {
-	    "express": "3.5.1"
-	}
+  "name": "paperpress-blog-example",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "3.5.1"
+  }
 }
