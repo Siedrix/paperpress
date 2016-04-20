@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "Example of using Paperpress with Koa",
   "main": "./server.js",
+  "scripts":{
+    "start": "node server.js"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Siedrix/paperpress"
