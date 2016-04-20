@@ -1,9 +1,7 @@
 var fs = require('fs'),
 	marked = require('marked'),
-	Feed = require('feed'),
-	_ = require('underscore'),
-	highlighter = require('highlight.js'),
-	path = require('path');
+	path = require('path'),
+	highlighter = require('highlight.js');
 
 marked.setOptions({
 	highlight: function (code) {
@@ -26,14 +24,17 @@ var Paperpress = function (config) {
 /********** Private Functions ***********/
 /****************************************/
 Paperpress.prototype._getCollections = function(){
-	var collections = fs.readdirSync(this.baseDirectory).filter((collection) => {
-		var path = this.baseDirectory + '/' + collection,
-			stats = fs.statSync(path)
+	try {
+		var collections = fs.readdirSync(this.baseDirectory).filter((collection) => {
+			var path = this.baseDirectory + '/' + collection,
+				stats = fs.statSync(path)
 
-		return stats.isDirectory()
-	})
-
-	return collections
+			return stats.isDirectory()
+		})
+		return collections
+	} catch (e) {
+		console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
+	}
 }
 
 Paperpress.prototype._titleToSlug = function (title) {
@@ -75,7 +76,7 @@ Paperpress.prototype._fileToItem = function(file){
 	var sugestedUri = '/' + file.collectionName +'/' + slug
 	if(this.uriPrefix){
 		sugestedUri = this.uriPrefix + sugestedUri
-	}	
+	}
 
 	return {
 		title: name,
@@ -138,13 +139,12 @@ Paperpress.prototype.getCollection = function(collectionName) {
 	return this._sortByDate(collection)
 }
 Paperpress.prototype.load = function() {
-	var self = this
-
 	var collections = this._getCollections()
-
-	collections.forEach((collection) => {
-		this._loadCollection(collection)
-	})
+	if (collections !== undefined ) {
+		collections.forEach((collection) => {
+			this._loadCollection(collection)
+		})
+	}
 }
 
 Paperpress.prototype.addHook = function(hook) {
