@@ -24,14 +24,17 @@ var Paperpress = function (config) {
 /********** Private Functions ***********/
 /****************************************/
 Paperpress.prototype._getCollections = function(){
-	var collections = fs.readdirSync(this.baseDirectory).filter((collection) => {
-		var path = this.baseDirectory + '/' + collection,
-			stats = fs.statSync(path)
+	try {
+		var collections = fs.readdirSync(this.baseDirectory).filter((collection) => {
+			var path = this.baseDirectory + '/' + collection,
+				stats = fs.statSync(path)
 
-		return stats.isDirectory()
-	})
-
-	return collections
+			return stats.isDirectory()
+		})
+		return collections
+	} catch (e) {
+		console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
+	}
 }
 
 Paperpress.prototype._titleToSlug = function (title) {
@@ -137,10 +140,11 @@ Paperpress.prototype.getCollection = function(collectionName) {
 }
 Paperpress.prototype.load = function() {
 	var collections = this._getCollections()
-
-	collections.forEach((collection) => {
-		this._loadCollection(collection)
-	})
+	if (collections !== undefined ) {
+		collections.forEach((collection) => {
+			this._loadCollection(collection)
+		})
+	}
 }
 
 Paperpress.prototype.addHook = function(hook) {
