@@ -42,6 +42,7 @@ describe('Paperpress', function(){
 		it('paperpress should have the next set of public function', function () {
 			var paperpress = new Paperpress(paperpressBaseConfig)
 			assert.equal(typeof paperpress.getCollection, 'function');
+			assert.equal(typeof paperpress.getCollections, 'function');
 			assert.equal(typeof paperpress.load, 'function');
 			assert.equal(typeof paperpress.addHook, 'function');
 		});
@@ -134,6 +135,21 @@ describe('Paperpress', function(){
 			assert.equal( snippets.length , 1 )
 		})
 	})
+
+	describe('#paperpress.getCollections()', function(){
+		it('paperpress should get collection into items array running the hooks', function(){
+			var paperpress = new Paperpress(paperpressBaseConfig)
+			paperpress.load()
+
+			var articlesAndSnippets = paperpress.getCollections(['articles', 'snippets'])
+			assert.equal( _.isArray( articlesAndSnippets ) , true )
+			assert.equal( articlesAndSnippets.length , 8 )
+
+			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
+			assert.equal( _.isArray( pagesAndSnippets ) , true )
+			assert.equal( pagesAndSnippets.length , 2 )
+		})
+	})
 })
 
 describe('Paperpress items', function(){
@@ -167,8 +183,8 @@ describe('Paperpress items', function(){
 		assert.deepEqual(snippet, {
 			type: 'snippets',
 			title: 'header',
-			slug: "header",
-			sugestedUri: "/blog/snippets/header",
+			slug: 'header',
+			sugestedUri: '/blog/snippets/header',
   			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
 		})
 	})

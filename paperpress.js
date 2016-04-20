@@ -138,6 +138,15 @@ Paperpress.prototype.getCollection = function(collectionName) {
 
 	return this._sortByDate(collection)
 }
+
+Paperpress.prototype.getCollections = function(collectionsName) {
+	var collection = this.items.filter((item) => {
+		return collectionsName.indexOf(item.type) >= 0
+	})
+
+	return this._sortByDate(collection)
+}
+
 Paperpress.prototype.load = function() {
 	var collections = this._getCollections()
 	if (collections !== undefined ) {
