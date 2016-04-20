@@ -1,0 +1,6 @@
+{
+	"title" : "John Resig's Modbot",
+	"path"  : "modbot",
+	"description" : "This project is a pair of bots designed to help sub-reddits moderate themselves in an easier fashion. At minimum the bots should drastically reduce the amount of time that moderaters spend dealing with issues stuck in the spam filter - and should noticably improve the overall experience for submitters.",
+	"date" : "Feb 24 2013 15:12:51 GMT-0500 (COT)"
+}

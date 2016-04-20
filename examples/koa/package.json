@@ -1,0 +1,24 @@
+{
+  "name": "koa-paperpress",
+  "version": "0.1.0",
+  "description": "Example of using Paperpress with Koa",
+  "main": "./server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Siedrix/paperpress"
+  },
+  "keywords": [
+    "koa",
+    "paperpress",
+    "markdown",
+    "bloging"
+  ],
+  "author": "Rogelio Alberto <i@rog.mx>",
+  "license": "Beerware",
+  "dependencies": {
+    "koa": "^1.2.0",
+    "koa-route": "^2.4.2",
+    "lodash.findwhere": "^3.1.0",
+    "paperpress": "^0.9.4"
+  }
+}
