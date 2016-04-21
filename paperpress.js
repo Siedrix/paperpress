@@ -1,5 +1,6 @@
 var fs = require('fs'),
 	marked = require('marked'),
+	Feed = require('feed'),
 	path = require('path'),
 	highlighter = require('highlight.js');
 
@@ -164,6 +165,7 @@ Paperpress.prototype.addHook = function(hook) {
 /****************************************/
 Paperpress.helpers = {}
 Paperpress.helpers.createFeed = function(description, items){
+
 	var feed = new Feed(description)
 
 	items.forEach(function (item) {
