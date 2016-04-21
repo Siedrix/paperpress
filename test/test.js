@@ -161,7 +161,7 @@ describe('Paperpress items', function(){
 		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug , 'after-five-comes-six' )
-		assert.equal( article.sugestedUri , '/articles/after-five-comes-six' )
+		assert.equal( article.suggestedPath , '/articles/after-five-comes-six' )
 	})
 
 	it('#paperpress items urls with prefix', function(){
@@ -171,8 +171,22 @@ describe('Paperpress items', function(){
 		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug , 'after-five-comes-six' )
-		assert.equal( article.sugestedUri , '/blog/articles/after-five-comes-six' )
+		assert.equal( article.suggestedPath , '/blog/articles/after-five-comes-six' )
 	})
+
+	it('#paperpress items urls uing builder', function(){
+		var paperpress= new Paperpress({
+			baseDirectory : 'test/static',
+			pathBuilder : function(item, collectionName){
+				return '/'+item.path
+			}
+		})
+		paperpress.load()
+
+		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
+		assert.equal( article.slug , 'after-five-comes-six' )
+		assert.equal( article.suggestedPath , '/after-five-comes-six' )
+	})	
 
 	it('#paperpress single file items', function(){
 		paperpress= new Paperpress(paperpressBaseConfig)

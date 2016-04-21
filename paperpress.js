@@ -1,4 +1,5 @@
 var fs = require('fs'),
+	Feed = require('feed'),
 	marked = require('marked'),
 	path = require('path'),
 	highlighter = require('highlight.js');
@@ -12,12 +13,22 @@ marked.setOptions({
 });
 
 var Paperpress = function (config) {
-	this.baseDirectory   = config.baseDirectory || 'static';
-	this.uriPrefix   = config.uriPrefix;
+	var self = this
 
-	this.items = [];
+	this.baseDirectory   = config.baseDirectory || 'static'
+	this.uriPrefix   = config.uriPrefix
+	this.pathBuilder = config.pathBuilder || function(item, collectionName){
+		var suggestedPath = '/' + collectionName +'/' + item.slug;
+		if(self.uriPrefix){
+			suggestedPath = this.uriPrefix + suggestedPath
+		}
 
-	this._hooks   = config.hooks || [];
+		return suggestedPath
+	}
+
+	this.items = []
+
+	this._hooks   = config.hooks || []
 };
 
 /****************************************/
@@ -46,14 +57,11 @@ Paperpress.prototype._titleToSlug = function (title) {
 Paperpress.prototype._directoryToItem = function (directory) {
 	var item = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
 
-	if(!item.path){
-		item.path = this._titleToSlug(item.title);
+	if(!item.slug){
+		item.slug = this._titleToSlug(item.title);
 	}
 
-	item.sugestedUri = '/' + directory.collectionName +'/' + item.path;
-	if(this.uriPrefix){
-		item.sugestedUri = this.uriPrefix + item.sugestedUri
-	}
+	item.suggestedPath = this.pathBuilder(item, directory.collectionName)
 
 	item.slug = item.path
 	item.date = new Date(item.date);
