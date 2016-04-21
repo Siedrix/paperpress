@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "4"
+  - "5"
+install:
+  - npm install
+before_script:
+  - mocha --version
+  - sleep 3 # give mocha some time to execute.

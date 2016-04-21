@@ -2,6 +2,9 @@
   "name": "paperpress",
   "version": "0.9.4",
   "main": "./paperpress",
+  "scripts": {
+    "test": "mocha -R spec"
+  },
   "keywords": [
     "express",
     "markdown",
