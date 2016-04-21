@@ -198,7 +198,7 @@ describe('Paperpress items', function(){
 			type: 'snippets',
 			title: 'header',
 			slug: 'header',
-			sugestedUri: '/blog/snippets/header',
+			suggestedPath: '/blog/snippets/header',
   			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
 		})
 	})

@@ -82,17 +82,15 @@ Paperpress.prototype._fileToItem = function(file){
 	var name = file.name.replace('.md', '')
 	var slug = this._titleToSlug(name)
 
-	var sugestedUri = '/' + file.collectionName +'/' + slug
-	if(this.uriPrefix){
-		sugestedUri = this.uriPrefix + sugestedUri
-	}
-
-	return {
+	var item = {
 		title: name,
 		slug: slug,
-		sugestedUri: sugestedUri,
-		content: marked(fileContent)
 	}
+
+	item.suggestedPath = this.pathBuilder(item, file.collectionName)
+	item.content = marked(fileContent)
+
+	return item
 }
 
 Paperpress.prototype._loadCollection = function (collectionName) {
@@ -177,7 +175,7 @@ Paperpress.helpers.createFeed = function(description, items){
 	var feed = new Feed(description)
 
 	items.forEach(function (item) {
-		item.link = description.link + item.sugestedUri
+		item.link = description.link + item.suggestedPath
 		item.date = new Date(item.date)
 
 		feed.addItem(item)
