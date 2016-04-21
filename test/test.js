@@ -97,7 +97,7 @@ describe('Paperpress', function(){
 			})
 			paperpress.addHook(function(item){
 				item.secondHookRunning = true
-			})			
+			})
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ) , true )
@@ -186,7 +186,7 @@ describe('Paperpress items', function(){
 		var article = _.findWhere(paperpress.items, {type:'articles', slug: 'after-five-comes-six'})
 		assert.equal( article.slug , 'after-five-comes-six' )
 		assert.equal( article.suggestedPath , '/after-five-comes-six' )
-	})	
+	})
 
 	it('#paperpress single file items', function(){
 		paperpress= new Paperpress(paperpressBaseConfig)
@@ -265,6 +265,44 @@ describe('Paperpress reload', function(){
 		assert.equal( _.isArray( shortStories ) , true )
 		assert.equal( shortStories.length , 1 )
 	})
+})
+
+describe('Paperpress feed', function () {
+
+	it('feed shoud be an object with title, description, items and a render function', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var feedDescription = require('./feed-description.json')
+		paperpress.load()
+
+		var articles = paperpress.getCollection('articles')
+		articles.forEach((item) => {
+			item.suggestedUri = '/blog/' + item.slug
+		})
+		var feed = Paperpress.helpers.createFeed(feedDescription, articles)
+
+		assert.equal(typeof feed, 'object')
+		assert.equal(feed.title, feedDescription.title)
+		assert.equal(feed.description, feedDescription.description)
+		assert.equal(_.isArray(feed.items), true)
+		assert.equal(typeof feed.render, 'function')
+		assert.equal(feed.items.length, 7)
+	})
+
+	it('feed item should be equal to article', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var feedDescription = require('./feed-description.json')
+		paperpress.load()
+		var articles = paperpress.getCollection('articles')
+		articles.forEach((item) => {
+			item.suggestedUri = '/blog/' + item.slug
+		})
+		var feed = Paperpress.helpers.createFeed(feedDescription, articles)
+		assert.equal(feed.items[0].title, articles[0].title)
+		assert.equal(feed.items[0].link, articles[0].link)
+		assert.equal(feed.items[0].date, articles[0].date)
+		assert.equal(feed.items[0].content, articles[0].content)
+	})
+
 })
 
 describe('Paperpress helpers', function(){})

@@ -171,15 +171,35 @@ Paperpress.prototype.addHook = function(hook) {
 /****************************************/
 Paperpress.helpers = {}
 Paperpress.helpers.createFeed = function(description, items){
+	// Create the Feed instance
+	try {
+		var feed = new Feed(description)
+	} catch (e) {
+		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Can\'t create the feed check the description object')
+	}
 
-	var feed = new Feed(description)
+	//Load the items on the feed
+	if (feed) {
+		try {
+			items.forEach(function (item) {
+				item.link = description.link + item.suggestedPath
+				item.date = new Date(item.date)
 
-	items.forEach(function (item) {
-		item.link = description.link + item.suggestedPath
-		item.date = new Date(item.date)
+				feed.addItem(item)
+			})
+		} catch(e) {
+			console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Undefined array for items')
+			return null
+		}
+	}
 
-		feed.addItem(item)
-	});
+	// Test if there is no error with the feed render function
+	try {
+		feed.render()
+	} catch (e) {
+		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed', e)
+		return null
+	}
 
 	return feed
 }

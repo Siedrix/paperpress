@@ -11,8 +11,6 @@ const paperpress = new Paperpress({
   uriPrefix: '/blog'
 })
 
-const feedDescription = require('./feed-description.json')
-
 paperpress.load()
 app.use(route.get('/', list))
 app.use(route.get('/feed', feed))
@@ -36,13 +34,20 @@ function * show (slug) {
 }
 
 // Blog Feed //
-function * feed (ctx) {
+function * feed (next) {
   const articles = paperpress.getCollection('articles')
   articles.forEach((item) => {
     item.suggestedUri = '/blog/' + item.slug
   })
-  this.type = 'text/xml; charset=utf-8'
-  this.body = Paperpress.helpers.createFeed(feedDescription, articles).render('rss-2.0')
+  const feed = Paperpress.helpers.createFeed(require('./feed-description.json'), articles)
+  if (feed) {
+    this.type = 'text/xml; charset=utf-8'
+    this.body = feed.render('rss-2.0')
+  } else {
+    this.status = 500
+    this.body = 'Error loading the feed'
+  }
+  yield next
 }
 
 /** Listen **/
