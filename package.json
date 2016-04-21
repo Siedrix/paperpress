@@ -1,6 +1,6 @@
 {
   "name": "paperpress",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "main": "./paperpress",
   "scripts": {
     "test": "mocha -R spec"
