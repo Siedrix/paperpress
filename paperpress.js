@@ -7,9 +7,7 @@ var fs = require('fs'),
 
 marked.setOptions({
 	highlight: function (code) {
-		var highlighted =highlighter.highlightAuto(code).value;
-
-		return highlighted;
+		return highlighter.highlightAuto(code).value
 	}
 });
 
@@ -28,7 +26,6 @@ var Paperpress = function (config) {
 	}
 
 	this.items = []
-
 	this._hooks   = config.hooks || []
 };
 
@@ -45,7 +42,7 @@ Paperpress.prototype._getCollections = function(){
 		})
 		return collections
 	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
+		// console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
 	}
 }
 
@@ -175,7 +172,8 @@ Paperpress.helpers.createFeed = function(description, items){
 	try {
 		var feed = new Feed(description)
 	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Can\'t create the feed check the description object')
+		return null
+		// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Can\'t create the feed check the description object')
 	}
 
 	//Load the items on the feed
@@ -188,7 +186,7 @@ Paperpress.helpers.createFeed = function(description, items){
 				feed.addItem(item)
 			})
 		} catch(e) {
-			console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Undefined array for items')
+			// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Undefined array for items')
 			return null
 		}
 	}
@@ -197,7 +195,7 @@ Paperpress.helpers.createFeed = function(description, items){
 	try {
 		feed.render()
 	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed', e)
+		// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed', e)
 		return null
 	}
 
