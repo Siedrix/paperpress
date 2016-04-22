@@ -113,7 +113,7 @@ describe('Paperpress', function(){
 			paperpress.load()
 
 			assert.equal( _.isArray( paperpress.items ) , true )
-			assert.equal( paperpress.items.length , 9 )
+			assert.equal( paperpress.items.length , 10 )
 		})
 	})
 
@@ -128,7 +128,7 @@ describe('Paperpress', function(){
 
 			var pages = paperpress.getCollection('pages')
 			assert.equal( _.isArray( pages ) , true )
-			assert.equal( pages.length , 1 )
+			assert.equal( pages.length , 2 )
 
 			var snippets = paperpress.getCollection('snippets')
 			assert.equal( _.isArray( snippets ) , true )
@@ -147,7 +147,7 @@ describe('Paperpress', function(){
 
 			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 			assert.equal( _.isArray( pagesAndSnippets ) , true )
-			assert.equal( pagesAndSnippets.length , 2 )
+			assert.equal( pagesAndSnippets.length , 3 )
 		})
 	})
 })
@@ -215,7 +215,7 @@ describe('Paperpress reload', function(){
 
 		var pages = paperpress.getCollection('pages')
 		assert.equal( _.isArray( pages ) , true )
-		assert.equal( pages.length , 1 )
+		assert.equal( pages.length , 2 )
 
 		var snippets = paperpress.getCollection('snippets')
 		assert.equal( _.isArray( snippets ) , true )

@@ -1,7 +1,6 @@
 var fs = require('fs'),
 	Feed = require('feed'),
 	marked = require('marked'),
-	Feed = require('feed'),
 	path = require('path'),
 	highlighter = require('highlight.js');
 
@@ -55,7 +54,7 @@ Paperpress.prototype._titleToSlug = function (title) {
 Paperpress.prototype._directoryToItem = function (directory) {
 	var item = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
 
-	if(!item.slug){
+	if (item.slug === undefined) {
 		item.slug = this._titleToSlug(item.title);
 	}
 
