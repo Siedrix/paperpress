@@ -1,7 +1,6 @@
 var fs = require('fs'),
 	Feed = require('feed'),
 	marked = require('marked'),
-	path = require('path'),
 	highlighter = require('highlight.js');
 
 marked.setOptions({
@@ -9,6 +8,19 @@ marked.setOptions({
 		return highlighter.highlightAuto(code).value
 	}
 });
+
+PaperPressError.prototype = Error.prototype
+process.on('uncaughtException', handleErrors)
+
+function PaperPressError (message) {
+	this.name = 'PaperPressError'
+	this.message = message || ''
+	this.errorCode = 8
+}
+function handleErrors (e) {
+	console.log("ECODE-" + e.errorCode + ": " + e.message)
+	process.exit(e.errorCode)
+}
 
 var Paperpress = function (config) {
 	var self = this
@@ -41,7 +53,7 @@ Paperpress.prototype._getCollections = function(){
 		})
 		return collections
 	} catch (e) {
-		// console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
+		// console.error('[Paperpress] ERROR - Can\'t read directory:', this.baseDirectory)
 	}
 }
 
@@ -152,10 +164,12 @@ Paperpress.prototype.getCollections = function(collectionsName) {
 
 Paperpress.prototype.load = function() {
 	var collections = this._getCollections()
-	if (collections !== undefined ) {
+	try {
 		collections.forEach((collection) => {
 			this._loadCollection(collection)
 		})
+	} catch (e) {
+		throw PaperPressError('Bad news...')
 	}
 }
 
@@ -171,8 +185,8 @@ Paperpress.helpers.createFeed = function(description, items){
 	try {
 		var feed = new Feed(description)
 	} catch (e) {
+		console.error('[Paperpress] ERROR - Feed. Can\'t create the feed check the description object')
 		return null
-		// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Can\'t create the feed check the description object')
 	}
 
 	//Load the items on the feed
@@ -185,7 +199,7 @@ Paperpress.helpers.createFeed = function(description, items){
 				feed.addItem(item)
 			})
 		} catch(e) {
-			// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Undefined array for items')
+			console.error('[Paperpress] ERROR - Feed. Undefined array for items')
 			return null
 		}
 	}
@@ -194,11 +208,12 @@ Paperpress.helpers.createFeed = function(description, items){
 	try {
 		feed.render()
 	} catch (e) {
-		// console.error('\033[31m[Paperpress] ERROR\033[0m - Feed', e)
+		console.error('[Paperpress] ERROR - Feed', e)
 		return null
 	}
 
 	return feed
 }
+
 
 exports.Paperpress = Paperpress;

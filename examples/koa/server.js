@@ -7,7 +7,7 @@ const _ = {
 
 const app = koa()
 const paperpress = new Paperpress({
-  baseDirectory: 'static',
+  baseDirectory: 'ddd',
   uriPrefix: '/blog'
 })
 

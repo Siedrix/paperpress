@@ -46,6 +46,12 @@ describe('Paperpress', function(){
 			assert.equal(typeof paperpress.load, 'function');
 			assert.equal(typeof paperpress.addHook, 'function');
 		});
+
+		it('paperpress load should return null when baseDirectory doesn\'t exist', function () {
+			var paperpress = new Paperpress({baseDirectory: 'foo'})
+			assert.equal(typeof paperpress, 'object')
+			assert.equal(paperpress.load(), null)
+		})
 	});
 
 	describe('#paperpress.hooks()', function(){
@@ -67,7 +73,7 @@ describe('Paperpress', function(){
 			var collections = paperpress._getCollections()
 
 			assert.equal( _.isArray( collections ) , true );
-			assert.equal( collections.length , 3 );
+			assert.equal(collections.length , 3);
 			assert.deepEqual( collections, [ 'articles', 'pages', 'snippets' ])
 		});
 	});
