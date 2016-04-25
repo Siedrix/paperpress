@@ -1,4 +1,4 @@
-# Paperpress [![Travis Build](https://api.travis-ci.org/Siedrix/paperpress.svg)](https://travis-ci.org/Siedrix/paperpress) [![Coverage Status](https://coveralls.io/repos/github/rogr/paperpress/badge.svg?branch=v1.0-coveralls)](https://coveralls.io/github/rogr/paperpress?branch=v1.0-coveralls)
+# Paperpress [![Travis Build](https://api.travis-ci.org/Siedrix/paperpress.svg)](https://travis-ci.org/Siedrix/paperpress) [![Coverage Status](https://coveralls.io/repos/github/Siedrix/paperpress/badge.svg?branch=v1.0-coveralls)](https://coveralls.io/github/Siedrix/paperpress?branch=v1.0-coveralls)
 
 This library will allow you to have a blog or static pages in markdown on top of any application with express, koa or any other Node.js http server. For feature request, contact @[Siedrix](https://twitter.com/Siedrix) on twitter or github.
 
