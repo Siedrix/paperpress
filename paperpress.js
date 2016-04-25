@@ -40,7 +40,7 @@ Paperpress.prototype._getCollections = function(){
 		})
 		return collections
 	} catch (e) {
-		// console.error('[Paperpress] ERROR - Can\'t read directory:', this.baseDirectory)
+		console.error('[Paperpress] ERROR - Can\'t read directory:', this.baseDirectory)
 	}
 }
 
