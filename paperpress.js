@@ -1,7 +1,7 @@
 var fs = require('fs')
-var	Feed = require('feed')
-var	marked = require('marked')
-var	highlighter = require('highlight.js')
+var Feed = require('feed')
+var marked = require('marked')
+var highlighter = require('highlight.js')
 
 marked.setOptions({
 	highlight: function (code) {
