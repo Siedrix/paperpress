@@ -9,19 +9,6 @@ marked.setOptions({
 	}
 });
 
-PaperPressError.prototype = Error.prototype
-process.on('uncaughtException', handleErrors)
-
-function PaperPressError (message) {
-	this.name = 'PaperPressError'
-	this.message = message || ''
-	this.errorCode = 8
-}
-function handleErrors (e) {
-	console.log("ECODE-" + e.errorCode + ": " + e.message)
-	process.exit(e.errorCode)
-}
-
 var Paperpress = function (config) {
 	var self = this
 
@@ -169,8 +156,10 @@ Paperpress.prototype.load = function() {
 			this._loadCollection(collection)
 		})
 	} catch (e) {
-		throw PaperPressError('Bad news...')
+		console.log('')
+		return null
 	}
+	return true
 }
 
 Paperpress.prototype.addHook = function(hook) {
@@ -180,9 +169,9 @@ Paperpress.prototype.addHook = function(hook) {
 /********** Helpers Functions ***********/
 /****************************************/
 Paperpress.helpers = {}
-Paperpress.helpers.createFeed = function(description, items){
+Paperpress.helpers.createFeed = function (description, items) {
 	// Create the Feed instance
-	try {
+	try {
 		var feed = new Feed(description)
 	} catch (e) {
 		console.error('[Paperpress] ERROR - Feed. Can\'t create the feed check the description object')
@@ -190,24 +179,22 @@ Paperpress.helpers.createFeed = function(description, items){
 	}
 
 	//Load the items on the feed
-	if (feed) {
-		try {
-			items.forEach(function (item) {
-				item.link = description.link + item.suggestedPath
-				item.date = new Date(item.date)
+	try {
+		items.forEach(function (item) {
+			item.link = description.link + item.suggestedPath
+			item.date = new Date(item.date)
 
-				feed.addItem(item)
-			})
-		} catch(e) {
-			console.error('[Paperpress] ERROR - Feed. Undefined array for items')
-			return null
-		}
+			feed.addItem(item)
+		})
+	} catch (e) {
+		console.error('[Paperpress] ERROR - Feed. Undefined array for items')
+		return null
 	}
 
 	// Test if there is no error with the feed render function
 	try {
 		feed.render()
-	} catch (e) {
+	} catch (e) {
 		console.error('[Paperpress] ERROR - Feed', e)
 		return null
 	}

@@ -11,7 +11,6 @@ var paperpressBaseConfig = {
 	uriPrefix  : '/blog'
 };
 
-
 /****************************************/
 /**************** TESTS *****************/
 /****************************************/
@@ -291,7 +290,7 @@ describe('Paperpress feed', function () {
 		assert.equal(feed.description, feedDescription.description)
 		assert.equal(_.isArray(feed.items), true)
 		assert.equal(typeof feed.render, 'function')
-		assert.equal(feed.items.length, 7)
+		assert.equal(feed.items.length, articles.length)
 	})
 
 	it('feed item should be equal to article', function () {
@@ -307,6 +306,32 @@ describe('Paperpress feed', function () {
 		assert.equal(feed.items[0].link, articles[0].link)
 		assert.equal(feed.items[0].date, articles[0].date)
 		assert.equal(feed.items[0].content, articles[0].content)
+	})
+
+	it('feed should return null when description are undefined', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var feed = Paperpress.helpers.createFeed()
+		assert.equal(feed, null)
+	})
+
+	it('feed should return null when articles are undefined', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var feedDescription = require('./feed-description.json')
+		paperpress.load()
+		var feed = Paperpress.helpers.createFeed(feedDescription)
+		assert.equal(feed, null)
+	})
+
+	it('feed should return null when feedDescription is invalid ', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var articles = paperpress.getCollection('articles')
+		articles.forEach((item) => {
+			item.suggestedUri = '/blog/' + item.slug
+		})
+		var feed = Paperpress.helpers.createFeed({}, articles)
+		assert.equal(feed, null)
 	})
 
 })
