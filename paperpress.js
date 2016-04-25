@@ -1,15 +1,11 @@
 var fs = require('fs'),
 	Feed = require('feed'),
 	marked = require('marked'),
-	Feed = require('feed'),
-	path = require('path'),
 	highlighter = require('highlight.js');
 
 marked.setOptions({
 	highlight: function (code) {
-		var highlighted =highlighter.highlightAuto(code).value;
-
-		return highlighted;
+		return highlighter.highlightAuto(code).value
 	}
 });
 
@@ -28,7 +24,6 @@ var Paperpress = function (config) {
 	}
 
 	this.items = []
-
 	this._hooks   = config.hooks || []
 };
 
@@ -45,7 +40,7 @@ Paperpress.prototype._getCollections = function(){
 		})
 		return collections
 	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Can\'t read directory:',this.baseDirectory)
+		console.error('[Paperpress] ERROR - Can\'t read directory:', this.baseDirectory)
 	}
 }
 
@@ -58,7 +53,7 @@ Paperpress.prototype._titleToSlug = function (title) {
 Paperpress.prototype._directoryToItem = function (directory) {
 	var item = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString());
 
-	if(!item.slug){
+	if (item.slug === undefined) {
 		item.slug = this._titleToSlug(item.title);
 	}
 
@@ -156,11 +151,15 @@ Paperpress.prototype.getCollections = function(collectionsName) {
 
 Paperpress.prototype.load = function() {
 	var collections = this._getCollections()
-	if (collections !== undefined ) {
+	try {
 		collections.forEach((collection) => {
 			this._loadCollection(collection)
 		})
+	} catch (e) {
+		console.log('')
+		return null
 	}
+	return true
 }
 
 Paperpress.prototype.addHook = function(hook) {
@@ -170,38 +169,38 @@ Paperpress.prototype.addHook = function(hook) {
 /********** Helpers Functions ***********/
 /****************************************/
 Paperpress.helpers = {}
-Paperpress.helpers.createFeed = function(description, items){
+Paperpress.helpers.createFeed = function (description, items) {
 	// Create the Feed instance
-	try {
+	try {
 		var feed = new Feed(description)
 	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Can\'t create the feed check the description object')
+		console.error('[Paperpress] ERROR - Feed. Can\'t create the feed check the description object')
+		return null
 	}
 
 	//Load the items on the feed
-	if (feed) {
-		try {
-			items.forEach(function (item) {
-				item.link = description.link + item.suggestedPath
-				item.date = new Date(item.date)
+	try {
+		items.forEach(function (item) {
+			item.link = description.link + item.suggestedPath
+			item.date = new Date(item.date)
 
-				feed.addItem(item)
-			})
-		} catch(e) {
-			console.error('\033[31m[Paperpress] ERROR\033[0m - Feed. Undefined array for items')
-			return null
-		}
+			feed.addItem(item)
+		})
+	} catch (e) {
+		console.error('[Paperpress] ERROR - Feed. Undefined array for items')
+		return null
 	}
 
 	// Test if there is no error with the feed render function
 	try {
 		feed.render()
-	} catch (e) {
-		console.error('\033[31m[Paperpress] ERROR\033[0m - Feed', e)
+	} catch (e) {
+		console.error('[Paperpress] ERROR - Feed', e)
 		return null
 	}
 
 	return feed
 }
+
 
 exports.Paperpress = Paperpress;

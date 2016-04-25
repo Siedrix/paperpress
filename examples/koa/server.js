@@ -21,12 +21,14 @@ app.use(route.get('/post/:slug', show))
 // Post listing //
 function * list (ctx) {
   this.body = yield paperpress.getCollection('articles')
+  console.log('[koa-paperpress] /')
 }
 
 // Show post :slug //
 function * show (slug) {
   const articles = paperpress.getCollection('articles')
   const article = _.findWhere(articles, {type: 'articles', path: slug})
+  console.log(`[koa-paperpress] /post/${slug}`)
   if (!article) {
     this.throw(404, 'Post doesn\'t exist')
   }
@@ -47,6 +49,7 @@ function * feed (next) {
     this.status = 500
     this.body = 'Error loading the feed'
   }
+  console.log('[koa-paperpress] /feed')
   yield next
 }
 

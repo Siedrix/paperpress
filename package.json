@@ -3,7 +3,9 @@
   "version": "0.9.6",
   "main": "./paperpress",
   "scripts": {
-    "test": "mocha -R spec"
+    "test": "./node_modules/mocha/bin/_mocha -R spec",
+    "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R nyan",
+    "report": "npm run coverage && open coverage/lcov-report/paperpress/paperpress.js.html"
   },
   "keywords": [
     "express",
@@ -12,19 +14,20 @@
   ],
   "dependencies": {
     "feed": "~0.3.0",
-    "marked": "~0.3.2",
-    "highlight.js": "~8.0.0"
+    "highlight.js": "^9.3.0",
+    "marked": "~0.3.5"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Siedrix/paperpress"
   },
   "devDependencies": {
-    "mocha": "~1.20.0",
-    "supertest": "~0.12.1",
-    "underscore": "1.4.4",
-    "grunt": "~0.4.5",
-    "grunt-contrib-watch": "~0.6.1",
-    "grunt-mocha-test": "~0.12.0"
+    "coveralls": "^2.11.9",
+    "grunt": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-mocha-test": "^0.12.7",
+    "istanbul": "^0.4.3",
+    "mocha": "^2.4.5",
+    "underscore": "^1.8.3"
   }
 }

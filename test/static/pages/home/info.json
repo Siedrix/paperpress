@@ -1,4 +1,5 @@
 {
-	"title" : "home",
-	"path"  : "home"
+	"title" : "about",
+	"path"  : "about",
+	"slug"  : "about"
 }

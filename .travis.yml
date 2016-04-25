@@ -7,3 +7,5 @@ install:
 before_script:
   - mocha --version
   - sleep 3 # give mocha some time to execute.
+after_script:
+  - NODE_ENV=test istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R dot && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage

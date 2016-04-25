@@ -11,7 +11,6 @@ var paperpressBaseConfig = {
 	uriPrefix  : '/blog'
 };
 
-
 /****************************************/
 /**************** TESTS *****************/
 /****************************************/
@@ -46,6 +45,12 @@ describe('Paperpress', function(){
 			assert.equal(typeof paperpress.load, 'function');
 			assert.equal(typeof paperpress.addHook, 'function');
 		});
+
+		it('paperpress load should return null when baseDirectory doesn\'t exist', function () {
+			var paperpress = new Paperpress({baseDirectory: 'foo'})
+			assert.equal(typeof paperpress, 'object')
+			assert.equal(paperpress.load(), null)
+		})
 	});
 
 	describe('#paperpress.hooks()', function(){
@@ -67,7 +72,7 @@ describe('Paperpress', function(){
 			var collections = paperpress._getCollections()
 
 			assert.equal( _.isArray( collections ) , true );
-			assert.equal( collections.length , 3 );
+			assert.equal(collections.length , 3);
 			assert.deepEqual( collections, [ 'articles', 'pages', 'snippets' ])
 		});
 	});
@@ -113,7 +118,7 @@ describe('Paperpress', function(){
 			paperpress.load()
 
 			assert.equal( _.isArray( paperpress.items ) , true )
-			assert.equal( paperpress.items.length , 9 )
+			assert.equal( paperpress.items.length , 10 )
 		})
 	})
 
@@ -128,7 +133,7 @@ describe('Paperpress', function(){
 
 			var pages = paperpress.getCollection('pages')
 			assert.equal( _.isArray( pages ) , true )
-			assert.equal( pages.length , 1 )
+			assert.equal( pages.length , 2 )
 
 			var snippets = paperpress.getCollection('snippets')
 			assert.equal( _.isArray( snippets ) , true )
@@ -147,7 +152,7 @@ describe('Paperpress', function(){
 
 			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 			assert.equal( _.isArray( pagesAndSnippets ) , true )
-			assert.equal( pagesAndSnippets.length , 2 )
+			assert.equal( pagesAndSnippets.length , 3 )
 		})
 	})
 })
@@ -215,7 +220,7 @@ describe('Paperpress reload', function(){
 
 		var pages = paperpress.getCollection('pages')
 		assert.equal( _.isArray( pages ) , true )
-		assert.equal( pages.length , 1 )
+		assert.equal( pages.length , 2 )
 
 		var snippets = paperpress.getCollection('snippets')
 		assert.equal( _.isArray( snippets ) , true )
@@ -285,7 +290,7 @@ describe('Paperpress feed', function () {
 		assert.equal(feed.description, feedDescription.description)
 		assert.equal(_.isArray(feed.items), true)
 		assert.equal(typeof feed.render, 'function')
-		assert.equal(feed.items.length, 7)
+		assert.equal(feed.items.length, articles.length)
 	})
 
 	it('feed item should be equal to article', function () {
@@ -301,6 +306,32 @@ describe('Paperpress feed', function () {
 		assert.equal(feed.items[0].link, articles[0].link)
 		assert.equal(feed.items[0].date, articles[0].date)
 		assert.equal(feed.items[0].content, articles[0].content)
+	})
+
+	it('feed should return null when description are undefined', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var feed = Paperpress.helpers.createFeed()
+		assert.equal(feed, null)
+	})
+
+	it('feed should return null when articles are undefined', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var feedDescription = require('./feed-description.json')
+		paperpress.load()
+		var feed = Paperpress.helpers.createFeed(feedDescription)
+		assert.equal(feed, null)
+	})
+
+	it('feed should return null when feedDescription is invalid ', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var articles = paperpress.getCollection('articles')
+		articles.forEach((item) => {
+			item.suggestedUri = '/blog/' + item.slug
+		})
+		var feed = Paperpress.helpers.createFeed({}, articles)
+		assert.equal(feed, null)
 	})
 
 })
