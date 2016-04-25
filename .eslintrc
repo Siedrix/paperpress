@@ -1,0 +1,7 @@
+{
+        "extends": "standard",
+        rules:{
+                "indent": [2, "tab"],
+                "space-in-parens": [0]
+        }
+}
