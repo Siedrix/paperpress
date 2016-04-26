@@ -8,7 +8,14 @@ const _ = {
 const app = koa()
 const paperpress = new Paperpress({
   baseDirectory: 'static',
-  uriPrefix: '/blog'
+  uriPrefix: '/blog',
+  pathBuilder: function(item, collectionName){
+    if(collectionName === 'articles'){
+      return '/post/'+item.slug
+    }else if(collectionName === 'pages'){
+      return '/'+item.slug
+    }
+  }
 })
 
 paperpress.load()
@@ -27,7 +34,7 @@ function * list (ctx) {
 // Show post :slug //
 function * show (slug) {
   const articles = paperpress.getCollection('articles')
-  const article = _.findWhere(articles, {type: 'articles', path: slug})
+  const article = _.findWhere(articles, {type: 'articles', slug: slug})
   console.log(`[koa-paperpress] /post/${slug}`)
   if (!article) {
     this.throw(404, 'Post doesn\'t exist')

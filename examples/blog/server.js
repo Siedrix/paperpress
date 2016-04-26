@@ -22,11 +22,11 @@ server.get('/blog', function (req, res) {
 
 server.get('/blog/articles/:article', function(req,res){
 	var articles = paperpress.getCollection('articles')
-	var article = _.findWhere(articles,{type:'articles', path:req.params.article})
+	var article = _.findWhere(articles,{type:'articles', slug:req.params.article})
 
 	if(!article){
 		res.status(404)
-		return res.render('404')
+		return res.send('404')
 	}
 
 	res.send(article)
