@@ -2,6 +2,7 @@
 var assert = require('assert')
 var	Paperpress = require('../paperpress').Paperpress
 var	_ = require('underscore')
+var fs = require('fs')
 
 /**
 **************************************
@@ -177,10 +178,10 @@ describe('Paperpress items', function () {
 			baseDirectory: 'test/static'
 		})
 		paperpress.load()
-		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
+		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-four-comes-five'})
 
-		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.path, '/articles/after-five-comes-six' )
+		assert.equal( article.slug, 'after-four-comes-five' )
+		assert.equal( article.path, '/articles/after-four-comes-five' )
 	})
 
 	it('#paperpress items urls from title', function () {
@@ -198,10 +199,10 @@ describe('Paperpress items', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 
-		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
+		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-four-comes-five'})
 
-		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.path, '/blog/articles/after-five-comes-six' )
+		assert.equal( article.slug, 'after-four-comes-five' )
+		assert.equal( article.path, '/blog/articles/after-four-comes-five' )
 	})
 
 	it('#paperpress items urls using builder', function () {
@@ -213,9 +214,9 @@ describe('Paperpress items', function () {
 		})
 		paperpress.load()
 
-		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
-		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.path, '/after-five-comes-six' )
+		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-four-comes-five'})
+		assert.equal( article.slug, 'after-four-comes-five' )
+		assert.equal( article.path, '/after-four-comes-five' )
 	})
 
 	it('#paperpress items paths in info.json', function () {
@@ -242,7 +243,7 @@ describe('Paperpress items', function () {
 			title: 'header',
 			slug: 'header',
 			suggestedPath: '/blog/snippets/header',
-			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
+			content: '<h2>This is the header</h2>\n'
 		})
 	})
 
@@ -339,6 +340,32 @@ describe('Paperpress reload', function () {
 		var newShortStories = paperpress.getCollection('short-stories')
 		assert.equal( _.isArray( newShortStories ), true )
 		assert.equal( newShortStories.length, 1 )
+	})
+})
+
+describe('Paperpress markdown render', function () {
+	it('markdown rendering should be equal to the rendered file', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var articles = paperpress.getCollection('articles')
+		var article = _.findWhere(articles, {type: 'articles', slug: 'githubs-markup'})
+		var content = fs.readFileSync('./test/static/articles/markup/test-content-rendered.html').toString()
+		assert.equal(typeof paperpress, 'object')
+		assert.equal(_.isArray(articles), true)
+		assert.equal(typeof article, 'object')
+		assert.equal(article.content, content)
+	})
+
+	it('syntax highlighting on markdown', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+		var articles = paperpress.getCollection('articles')
+		var article = _.findWhere(articles, {type: 'articles', slug: 'markdown-test'})
+		var content = fs.readFileSync('./test/static/articles/markdown-test/test-content-rendered.html').toString()
+		assert.equal(typeof paperpress, 'object')
+		assert.equal(_.isArray(articles), true)
+		assert.equal(typeof article, 'object')
+		assert.equal(article.content, content)
 	})
 })
 

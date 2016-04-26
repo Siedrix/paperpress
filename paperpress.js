@@ -31,10 +31,6 @@ var sluglify = function (str) {
 	return str
 }
 
-marked.renderer.rules.heading_open = function (tag) {
-	return '<h' + tag[0].hLevel + ' id="' + sluglify(tag[1].content) + '">'
-}
-
 var Paperpress = function (config) {
 	var self = this
 	if (config === undefined) {
