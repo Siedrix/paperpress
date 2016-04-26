@@ -13,6 +13,8 @@ var paperpressBaseConfig = {
 	uriPrefix: '/blog'
 }
 
+console.warn = function () {}
+
 /**
 **************************************
 **************** TESTS ***************
@@ -170,7 +172,18 @@ describe('Paperpress items', function () {
 		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.suggestedPath, '/articles/after-five-comes-six' )
+		assert.equal( article.path, '/articles/after-five-comes-six' )
+	})
+
+	it('#paperpress items urls from title', function () {
+		var paperpress = new Paperpress({
+			baseDirectory: 'test/static'
+		})
+		paperpress.load()
+		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'githubs-markup'})
+
+		assert.equal( article.slug, 'githubs-markup' )
+		assert.equal( article.path, '/articles/githubs-markup' )
 	})
 
 	it('#paperpress items urls with prefix', function () {
@@ -180,21 +193,35 @@ describe('Paperpress items', function () {
 		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
 
 		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.suggestedPath, '/blog/articles/after-five-comes-six' )
+		assert.equal( article.path, '/blog/articles/after-five-comes-six' )
 	})
 
-	it('#paperpress items urls uing builder', function () {
+	it('#paperpress items urls using builder', function () {
 		var paperpress = new Paperpress({
 			baseDirectory: 'test/static',
 			pathBuilder: function (item, collectionName) {
-				return '/' + item.path
+				return '/' + item.slug
 			}
 		})
 		paperpress.load()
 
 		var article = _.findWhere(paperpress.items, {type: 'articles', slug: 'after-five-comes-six'})
 		assert.equal( article.slug, 'after-five-comes-six' )
-		assert.equal( article.suggestedPath, '/after-five-comes-six' )
+		assert.equal( article.path, '/after-five-comes-six' )
+	})
+
+	it('#paperpress items paths in info.json', function () {
+		var paperpress = new Paperpress({
+			baseDirectory: 'test/static',
+			pathBuilder: function (item, collectionName) {
+				return '/' + item.slug
+			}
+		})
+		paperpress.load()
+
+		var home = _.findWhere(paperpress.items, {type: 'pages', path: '/home'})
+		assert.equal( home.slug, 'home' )
+		assert.equal( home.path, '/home' )
 	})
 
 	it('#paperpress single file items', function () {
@@ -210,6 +237,24 @@ describe('Paperpress items', function () {
 			suggestedPath: '/blog/snippets/header',
 			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
 		})
+	})
+})
+
+describe('Paperpress invalid items', function () {
+	it('#paperpress item with no date', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var invalidItem = _.findWhere(paperpress.items, {slug: 'invalid-date'})
+		assert.equal( invalidItem, undefined )
+	})
+
+	it('#paperpress item with no title', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var invalidItem = _.findWhere(paperpress.items, {slug: undefined})
+		assert.equal( invalidItem, undefined )
 	})
 })
 
@@ -276,7 +321,7 @@ describe('Paperpress reload', function () {
 	})
 })
 
-describe('Paperpress feed', function () {
+describe('Paperpress feed helper', function () {
 	it('feed shoud be an object with title, description, items and a render function', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		var feedDescription = require('./feed-description.json')
@@ -337,5 +382,3 @@ describe('Paperpress feed', function () {
 		assert.equal(feed, null)
 	})
 })
-
-describe('Paperpress helpers', function () {})
