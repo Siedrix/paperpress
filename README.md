@@ -37,6 +37,3 @@ Then create a directory for you Paperpress files, each directory will be treated
 
 ## Collection item as file
 - **[ITEM_NAME].md** This file will be converted to a collection item with title, slug, sugestedUri and content.
-
-## Bugs
-- Render links correctly
