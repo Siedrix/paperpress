@@ -57,13 +57,21 @@ Paperpress.prototype._titleToSlug = function (title) {
 Paperpress.prototype._directoryToItem = function (directory) {
 	var item = JSON.parse(fs.readFileSync(directory.path + '/info.json').toString())
 
+	if (!item.title) {
+		console.warn('[Paperpress] item ' + directory.path + ' without title')
+		return
+	}
+
+	if (!item.date) {
+		console.warn('[Paperpress] item ' + directory.path + ' without date')
+		return
+	}
+
 	if (item.slug === undefined) {
 		item.slug = this._titleToSlug(item.title)
 	}
 
-	item.suggestedPath = this.pathBuilder(item, directory.collectionName)
-
-	item.slug = item.path
+	item.path = item.path || this.pathBuilder(item, directory.collectionName)
 	item.date = new Date(item.date)
 
 	if (item.contentType === 'html') {
@@ -119,12 +127,15 @@ Paperpress.prototype._loadCollection = function (collectionName) {
 				collectionName: collectionName
 			})
 		}
-		item.type = collectionName
-		self._hooks.forEach(function (fn) {
-			fn(item)
-		})
 
-		self.items.push(item)
+		if (item) {
+			item.type = collectionName
+			self._hooks.forEach(function (fn) {
+				fn(item)
+			})
+
+			self.items.push(item)
+		}
 	})
 }
 
@@ -162,7 +173,7 @@ Paperpress.prototype.load = function () {
 			this._loadCollection(collection)
 		})
 	} catch (e) {
-		console.log('')
+		console.error('[Paperpress] ERROR on load')
 		return null
 	}
 	return true
@@ -190,7 +201,7 @@ Paperpress.helpers.createFeed = function (description, items) {
 	// Load the items on the feed
 	try {
 		items.forEach(function (item) {
-			item.link = description.link + item.suggestedPath
+			item.link = description.link + item.path
 			item.date = new Date(item.date)
 
 			feed.addItem(item)

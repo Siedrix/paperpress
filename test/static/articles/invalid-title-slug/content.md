@@ -1,0 +1,1 @@
+This article has title, slug or path

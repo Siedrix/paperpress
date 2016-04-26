@@ -2,5 +2,6 @@
 	"title" : "home",
 	"path"  : "home",
 	"slug"  : "home",
-	"contentType": "html"
+	"contentType": "html",
+	"date" : "Fri Nov 08 2013 15:13:14 GMT-0500 (COT)"
 }

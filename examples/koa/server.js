@@ -8,12 +8,20 @@ const _ = {
 const app = koa()
 const paperpress = new Paperpress({
   baseDirectory: 'static',
-  uriPrefix: '/blog'
+  uriPrefix: '/blog',
+  pathBuilder: function (item, collectionName) {
+    if (collectionName === 'articles') {
+      return `post/${item.slug}`
+    } else if (collectionName === 'pages') {
+      return `/page/${item.slug}`
+    }
+  }
 })
 
 paperpress.load()
 app.use(route.get('/', list))
 app.use(route.get('/feed', feed))
+app.use(route.get('/page/:slug', page))
 app.use(route.get('/post/:slug', show))
 
 /** Route Definitions **/
@@ -27,10 +35,10 @@ function * list (ctx) {
 // Show post :slug //
 function * show (slug) {
   const articles = paperpress.getCollection('articles')
-  const article = _.findWhere(articles, {type: 'articles', path: slug})
+  const article = _.findWhere(articles, {type: 'articles', slug: slug})
   console.log(`[koa-paperpress] /post/${slug}`)
   if (!article) {
-    this.throw(404, 'Post doesn\'t exist')
+    this.throw(404, "Post doesn't exist")
   }
   this.body = yield article
 }
@@ -51,6 +59,17 @@ function * feed (next) {
   }
   console.log('[koa-paperpress] /feed')
   yield next
+}
+
+// Show page :slug //
+function * page (slug) {
+  const pages = paperpress.getCollection('pages')
+  const page = _.findWhere(pages, {type: 'pages', slug: slug})
+  console.log(`[koa-paperpress] /page/${slug}`)
+  if (!page) {
+    this.throw(404, "Page doesn't exist")
+  }
+  this.body = yield page
 }
 
 /** Listen **/
