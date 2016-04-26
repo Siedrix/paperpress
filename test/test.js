@@ -13,6 +13,7 @@ var paperpressBaseConfig = {
 	uriPrefix: '/blog'
 }
 
+console.error = function () {}
 console.warn = function () {}
 
 /**

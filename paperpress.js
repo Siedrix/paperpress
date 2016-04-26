@@ -173,7 +173,7 @@ Paperpress.prototype.load = function () {
 			this._loadCollection(collection)
 		})
 	} catch (e) {
-		console.log('')
+		console.error('[Paperpress] ERROR on load')
 		return null
 	}
 	return true
