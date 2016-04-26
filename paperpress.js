@@ -1,17 +1,45 @@
 var fs = require('fs')
+var path = require('path')
 var Feed = require('feed')
-var marked = require('marked')
+var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
 
-marked.setOptions({
+var marked = new Remarkable({
+	html: true,
+	linkify: true,
 	highlight: function (code) {
 		return highlighter.highlightAuto(code).value
 	}
 })
 
+var sluglify = function (str) {
+	str = str.replace(/^\s+|\s+$/g, '') // trim
+	str = str.toLowerCase()
+
+	// remove accents, swap ñ for n, and other invalid chars
+	var invChar = 'àáäâèéëêìíïîòóöôùúüûñç·/_,:;'
+	var invCharTo = 'aaaaeeeeiiiioooouuuunc------'
+
+	for (var i = 0, l = invChar.length; i < l; i++) {
+		str = str.replace(new RegExp(invChar.charAt(i), 'g'), invCharTo.charAt(i))
+	}
+
+	str = str.replace(/[^a-z0-9 -]/g, '') // remove invalid chars
+		.replace(/\s+/g, '-') // collapse whitespace and replace by -
+		.replace(/-+/g, '-') // collapse dashes
+
+	return str
+}
+
+marked.renderer.rules.heading_open = function (tag) {
+	return '<h' + tag[0].hLevel + ' id="' + sluglify(tag[1].content) + '">'
+}
+
 var Paperpress = function (config) {
 	var self = this
-
+	if (config === undefined) {
+		config = {}
+	}
 	this.baseDirectory = config.baseDirectory || 'static'
 	this.uriPrefix = config.uriPrefix
 	this.pathBuilder = config.pathBuilder || function (item, collectionName) {
@@ -43,15 +71,12 @@ Paperpress.prototype._getCollections = function () {
 		return collections
 	} catch (e) {
 		console.error('[Paperpress] ERROR - Can\'t read directory:', this.baseDirectory)
+		return null
 	}
 }
 
 Paperpress.prototype._titleToSlug = function (title) {
-	var slug = title.toLowerCase()
-		.replace(/ /g, '-')
-		.replace(/[^\w-]+/g, '')
-
-	return slug
+	return sluglify(title)
 }
 
 Paperpress.prototype._directoryToItem = function (directory) {
@@ -78,7 +103,7 @@ Paperpress.prototype._directoryToItem = function (directory) {
 		item.content = fs.readFileSync(directory.path + '/content.html').toString()
 	} else {
 		var content = fs.readFileSync(directory.path + '/content.md').toString()
-		item.content = marked(content)
+		item.content = marked.render(content)
 	}
 
 	return item
@@ -86,7 +111,8 @@ Paperpress.prototype._directoryToItem = function (directory) {
 
 Paperpress.prototype._fileToItem = function (file) {
 	var fileContent = fs.readFileSync(file.path).toString()
-	var name = file.name.replace('.md', '')
+	var fileType = (path.extname(file.path) === '.md') ? '.md' : '.html'
+	var name = file.name.replace(fileType, '')
 	var slug = this._titleToSlug(name)
 
 	var item = {
@@ -95,7 +121,7 @@ Paperpress.prototype._fileToItem = function (file) {
 	}
 
 	item.suggestedPath = this.pathBuilder(item, file.collectionName)
-	item.content = marked(fileContent)
+	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
 
 	return item
 }

@@ -58,6 +58,13 @@ describe('Paperpress', function () {
 			assert.equal(typeof paperpress, 'object')
 			assert.equal(paperpress.load(), null)
 		})
+
+		it('paperpress should load default baseDirectory when config is undefined', function () {
+			var paperpress = new Paperpress()
+			assert.equal(typeof paperpress, 'object')
+			assert.equal(paperpress.baseDirectory, 'static')
+			assert.equal(paperpress.load(), null)
+		})
 	})
 
 	describe('#paperpress.hooks()', function () {
@@ -125,7 +132,7 @@ describe('Paperpress', function () {
 			paperpress.load()
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 10 )
+			assert.equal( paperpress.items.length, 11 )
 		})
 	})
 
@@ -144,7 +151,7 @@ describe('Paperpress', function () {
 
 			var snippets = paperpress.getCollection('snippets')
 			assert.equal( _.isArray( snippets ), true )
-			assert.equal( snippets.length, 1 )
+			assert.equal( snippets.length, 2 )
 		})
 	})
 
@@ -155,11 +162,11 @@ describe('Paperpress', function () {
 
 			var articlesAndSnippets = paperpress.getCollections(['articles', 'snippets'])
 			assert.equal( _.isArray( articlesAndSnippets ), true )
-			assert.equal( articlesAndSnippets.length, 8 )
+			assert.equal( articlesAndSnippets.length, 9 )
 
 			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 			assert.equal( _.isArray( pagesAndSnippets ), true )
-			assert.equal( pagesAndSnippets.length, 3 )
+			assert.equal( pagesAndSnippets.length, 4 )
 		})
 	})
 })
@@ -225,18 +232,31 @@ describe('Paperpress items', function () {
 		assert.equal( home.path, '/home' )
 	})
 
-	it('#paperpress single file items', function () {
+	it('#paperpress snippet markdown file', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 
-		var snippet = paperpress.getCollection('snippets')[0]
-
+		var snippet = _.findWhere(paperpress.getCollection('snippets'), {slug: 'header'})
 		assert.deepEqual(snippet, {
 			type: 'snippets',
 			title: 'header',
 			slug: 'header',
 			suggestedPath: '/blog/snippets/header',
 			content: '<h2 id="this-is-the-header">This is the header</h2>\n'
+		})
+	})
+
+	it('#paperpress snippet html file', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var snippet = _.findWhere(paperpress.getCollection('snippets'), {slug: 'title-section-with-htmltest'})
+		assert.deepEqual(snippet, {
+			type: 'snippets',
+			title: 'title section-with _html.test',
+			slug: 'title-section-with-htmltest',
+			suggestedPath: '/blog/snippets/title-section-with-htmltest',
+			content: '<div id="title"><h1>Ground Control to Major Tom</h1></div>\n'
 		})
 	})
 })
@@ -274,7 +294,7 @@ describe('Paperpress reload', function () {
 
 		var snippets = paperpress.getCollection('snippets')
 		assert.equal( _.isArray( snippets ), true )
-		assert.equal( snippets.length, 1 )
+		assert.equal( snippets.length, 2 )
 
 		paperpress.baseDirectory = 'test/reload'
 		paperpress.load()
