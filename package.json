@@ -1,6 +1,6 @@
 {
   "name": "paperpress",
-  "version": "0.9.7",
+  "version": "0.9.8",
   "main": "./paperpress",
   "scripts": {
     "test": "./node_modules/mocha/bin/_mocha -R spec && npm run lint",
