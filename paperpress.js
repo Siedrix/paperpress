@@ -39,15 +39,16 @@ var Paperpress = function (config) {
 	this.baseDirectory = config.baseDirectory || 'static'
 	this.uriPrefix = config.uriPrefix
 	this.pathBuilder = config.pathBuilder || function (item, collectionName) {
-		var suggestedPath = '/' + collectionName + '/' + item.slug
+		var path = '/' + collectionName + '/' + item.slug
 		if (self.uriPrefix) {
-			suggestedPath = this.uriPrefix + suggestedPath
+			path = this.uriPrefix + path
 		}
 
-		return suggestedPath
+		return path
 	}
 
 	this.items = []
+	this.paths = []
 	this._hooks = config.hooks || []
 }
 
@@ -88,12 +89,11 @@ Paperpress.prototype._directoryToItem = function (directory) {
 		return
 	}
 
-	if (item.slug === undefined) {
-		item.slug = this._titleToSlug(item.title)
-	}
+	item.slug = this._titleToSlug((item.slug === undefined) ? item.title : item.slug)
 
 	item.path = item.path || this.pathBuilder(item, directory.collectionName)
 	item.date = new Date(item.date)
+	this.paths.push(item.path)
 
 	if (item.contentType === 'html') {
 		item.content = fs.readFileSync(directory.path + '/content.html').toString()
@@ -116,10 +116,24 @@ Paperpress.prototype._fileToItem = function (file) {
 		slug: slug
 	}
 
-	item.suggestedPath = this.pathBuilder(item, file.collectionName)
+	item.path = this.pathBuilder(item, file.collectionName)
 	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
+	this.paths.push(item.path)
 
 	return item
+}
+
+Paperpress.prototype._getDuplicatePaths = function () {
+	var paths = this.paths.slice()
+	var duplicatePaths = []
+
+	paths.sort().forEach(function (item, i) {
+		if (paths[i + 1] === item) {
+			duplicatePaths.push(item)
+		}
+	})
+
+	return duplicatePaths
 }
 
 Paperpress.prototype._loadCollection = function (collectionName) {
@@ -195,9 +209,15 @@ Paperpress.prototype.load = function () {
 			this._loadCollection(collection)
 		})
 	} catch (e) {
-		console.error('[Paperpress] ERROR on load')
+		console.error('[Paperpress] ERROR on load', e.message)
 		return null
 	}
+
+	var duplicatePaths = this._getDuplicatePaths()
+	if (duplicatePaths.length > 0) {
+		console.warn('[Paperpress] Duplicated paths:', duplicatePaths)
+	}
+
 	return true
 }
 
