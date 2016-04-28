@@ -58,9 +58,10 @@ var Paperpress = function (config) {
 **************************************
 **/
 Paperpress.prototype._getCollections = function () {
+	var that = this
 	try {
-		var collections = fs.readdirSync(this.baseDirectory).filter((collection) => {
-			var path = this.baseDirectory + '/' + collection
+		var collections = fs.readdirSync(this.baseDirectory).filter(function (collection) {
+			var path = that.baseDirectory + '/' + collection
 			var stats = fs.statSync(path)
 
 			return stats.isDirectory()
@@ -187,7 +188,7 @@ Paperpress.prototype._sortByDate = function (items) {
 **************************************
 **/
 Paperpress.prototype.getCollection = function (collectionName) {
-	var collection = this.items.filter((item) => {
+	var collection = this.items.filter(function (item) {
 		return item.type === collectionName
 	})
 
@@ -195,7 +196,7 @@ Paperpress.prototype.getCollection = function (collectionName) {
 }
 
 Paperpress.prototype.getCollections = function (collectionsName) {
-	var collection = this.items.filter((item) => {
+	var collection = this.items.filter(function (item) {
 		return collectionsName.indexOf(item.type) >= 0
 	})
 
@@ -203,10 +204,11 @@ Paperpress.prototype.getCollections = function (collectionsName) {
 }
 
 Paperpress.prototype.load = function () {
+	var that = this
 	var collections = this._getCollections()
 	try {
-		collections.forEach((collection) => {
-			this._loadCollection(collection)
+		collections.forEach(function (collection) {
+			that._loadCollection(collection)
 		})
 	} catch (e) {
 		console.error('[Paperpress] ERROR on load', e.message)
