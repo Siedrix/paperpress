@@ -403,7 +403,7 @@ describe('Paperpress feed helper', function () {
 		paperpress.load()
 
 		var articles = paperpress.getCollection('articles')
-		articles.forEach((item) => {
+		articles.forEach(function (item) {
 			item.suggestedUri = '/blog/' + item.slug
 		})
 		var feed = Paperpress.helpers.createFeed(feedDescription, articles)
@@ -421,7 +421,7 @@ describe('Paperpress feed helper', function () {
 		var feedDescription = require('./feed-description.json')
 		paperpress.load()
 		var articles = paperpress.getCollection('articles')
-		articles.forEach((item) => {
+		articles.forEach(function (item) {
 			item.suggestedUri = '/blog/' + item.slug
 		})
 		var feed = Paperpress.helpers.createFeed(feedDescription, articles)
@@ -450,7 +450,7 @@ describe('Paperpress feed helper', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 		var articles = paperpress.getCollection('articles')
-		articles.forEach((item) => {
+		articles.forEach(function (item) {
 			item.suggestedUri = '/blog/' + item.slug
 		})
 		var feed = Paperpress.helpers.createFeed({}, articles)
