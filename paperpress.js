@@ -48,6 +48,7 @@ var Paperpress = function (config) {
 	}
 
 	this.items = []
+	this.paths = []
 	this._hooks = config.hooks || []
 }
 
@@ -88,12 +89,11 @@ Paperpress.prototype._directoryToItem = function (directory) {
 		return
 	}
 
-	if (item.slug === undefined) {
-		item.slug = this._titleToSlug(item.title)
-	}
+	item.slug = this._titleToSlug((item.slug === undefined) ? item.title : item.slug)
 
 	item.path = item.path || this.pathBuilder(item, directory.collectionName)
 	item.date = new Date(item.date)
+	this.paths.push(item.path)
 
 	if (item.contentType === 'html') {
 		item.content = fs.readFileSync(directory.path + '/content.html').toString()
@@ -118,8 +118,22 @@ Paperpress.prototype._fileToItem = function (file) {
 
 	item.suggestedPath = this.pathBuilder(item, file.collectionName)
 	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
+	this.paths.push(item.suggestedPath)
 
 	return item
+}
+
+Paperpress.prototype._validatePaths = function (items) {
+	var paths = this.paths.slice()
+	var duplicatePaths = []
+
+	paths.sort().forEach(function (item, i) {
+		if (paths[i + 1] === item) {
+			duplicatePaths.push(item)
+		}
+	})
+
+	return duplicatePaths
 }
 
 Paperpress.prototype._loadCollection = function (collectionName) {
@@ -195,9 +209,12 @@ Paperpress.prototype.load = function () {
 			this._loadCollection(collection)
 		})
 	} catch (e) {
-		console.error('[Paperpress] ERROR on load')
+		console.error('[Paperpress] ERROR on load', e.message)
 		return null
 	}
+	// console.log(this.items)
+	console.log(this._validatePaths(this.items))
+
 	return true
 }
 

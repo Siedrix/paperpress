@@ -1,8 +1,8 @@
 /* global describe, it */
-var assert = require('assert')
-var	Paperpress = require('../paperpress').Paperpress
-var	_ = require('underscore')
+var _ = require('underscore')
 var fs = require('fs')
+var assert = require('assert')
+var Paperpress = require('../paperpress').Paperpress
 
 /**
 **************************************
@@ -173,6 +173,22 @@ describe('Paperpress', function () {
 })
 
 describe('Paperpress items', function () {
+	it('#paperpress slugs', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var stringsToSlug = {
+			'OH! YOU PRETTY THINGS!': 'oh-you-pretty-things',
+			'¿Is there life on Mars?': 'is-there-life-on-mars',
+			'áçéñtósylálétráéÑéÁÇÉNTÓS': 'acentosylaletraeneacentos',
+			'If you\'re reading this, you\'ve been in a coma for almost 20 years now. We`re trying a new technique. We don\'t know where this message will end up in your dream, but we hope it works. Please wake up, we miss you.': 'if-youre-reading-this-youve-been-in-a-coma-for-almost-20-years-now-were-trying-a-new-technique-we-dont-know-where-this-message-will-end-up-in-your-dream-but-we-hope-it-works-please-wake-up-we-miss-you',
+			'Roses are \u001b[0;31mred\u001b[0m, violets are \u001b[0;34mblue. Hope you enjoy terminal hue': 'roses-are-0-31mred0m-violets-are-0-34mblue-hope-you-enjoy-terminal-hue',
+			'But now...\u001b[20Cfor my greatest trick...\u001b[8m': 'but-now20cfor-my-greatest-trick8m',
+			'We.Could-Be-Heroes... Just_For One...Day!': 'wecould-be-heroes-just-for-oneday'
+		}
+		for (var str in stringsToSlug) {
+			assert.equal(paperpress._titleToSlug(str), stringsToSlug[str])
+		}
+	})
+
 	it('#paperpress items urls', function () {
 		var paperpress = new Paperpress({
 			baseDirectory: 'test/static'
@@ -277,6 +293,14 @@ describe('Paperpress invalid items', function () {
 
 		var invalidItem = _.findWhere(paperpress.items, {slug: undefined})
 		assert.equal( invalidItem, undefined )
+	})
+
+	it('#paperpress duplicate slugs', function () {
+		var paperpress = new Paperpress({
+			baseDirectory: 'test/reload',
+			uriPrefix: '/blog'
+		})
+		paperpress.load()
 	})
 })
 
