@@ -2,6 +2,7 @@
   "name": "paperpress",
   "version": "0.9.8",
   "main": "./paperpress",
+  "description": "A static pages generator for Node.js.",
   "scripts": {
     "test": "./node_modules/mocha/bin/_mocha -R spec && npm run lint",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R nyan",

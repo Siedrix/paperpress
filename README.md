@@ -21,7 +21,7 @@ Create a Paperpress instance
 ```js
 var Paperpress = require('paperpress')
 var paperpress = new Paperpress({
-  baseDirectory: 'test/static'
+  baseDirectory: 'static'
 })
 paperpress.load()
 ```
