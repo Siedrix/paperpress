@@ -123,7 +123,7 @@ Paperpress.prototype._fileToItem = function (file) {
 	return item
 }
 
-Paperpress.prototype._getDuplicatePaths = function (items) {
+Paperpress.prototype._getDuplicatePaths = function () {
 	var paths = this.paths.slice()
 	var duplicatePaths = []
 
@@ -213,7 +213,7 @@ Paperpress.prototype.load = function () {
 		return null
 	}
 
-	var duplicatePaths = this._getDuplicatePaths(this.items)
+	var duplicatePaths = this._getDuplicatePaths()
 	if (duplicatePaths.length > 0) {
 		console.warn('[Paperpress] Duplicated paths:', duplicatePaths)
 	}

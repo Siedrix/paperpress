@@ -295,15 +295,15 @@ describe('Paperpress invalid items', function () {
 		assert.equal( invalidItem, undefined )
 	})
 
-	it('#paperpress duplicate slugs', function () {
+	it('#paperpress duplicate paths', function () {
 		var paperpress = new Paperpress({
 			baseDirectory: 'test/duplicate-paths',
 			uriPrefix: '/blog'
 		})
-		var duplicatePaths = ['/blog/articles/article']
+		var duplicatePaths = [ '/blog/articles/article', '/blog/pages/home', '/blog/snippets/header' ]
 		paperpress.load()
-		assert.equal(_.isArray(paperpress._getDuplicatePaths(paperpress.items)), true)
-		assert.equal(_.isEqual(paperpress._getDuplicatePaths(paperpress.items), duplicatePaths), true)
+		assert.equal(_.isArray(paperpress._getDuplicatePaths()), true)
+		assert.equal(_.isEqual(paperpress._getDuplicatePaths(), duplicatePaths), true)
 	})
 })
 
