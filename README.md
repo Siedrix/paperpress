@@ -1,4 +1,4 @@
-# Paperpress
+# [Paperpress](https://github.com/Siedrix/paperpress)
 
 [![Build Status](https://travis-ci.org/Siedrix/paperpress.svg?branch=master)](https://travis-ci.org/Siedrix/paperpress)
 [![Coverage Status](https://coveralls.io/repos/github/Siedrix/paperpress/badge.svg?branch=master)](https://coveralls.io/github/Siedrix/paperpress?branch=master)
