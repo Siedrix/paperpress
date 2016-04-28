@@ -1,6 +1,15 @@
-# Paperpress [![Travis Build](https://api.travis-ci.org/Siedrix/paperpress.svg)](https://travis-ci.org/Siedrix/paperpress) [![Coverage Status](https://coveralls.io/repos/github/Siedrix/paperpress/badge.svg?branch=master)](https://coveralls.io/github/Siedrix/paperpress?branch=master)
+# Paperpress
 
-This library will allow you to have a blog or static pages in markdown on top of any application with express, koa or any other Node.js http server. For feature request, contact @[Siedrix](http://siedrix.com) on [twitter](https://twitter.com/Siedrix) or [github](https://github.com/Siedrix/paperpress/issues/new).
+[![Build Status](https://travis-ci.org/Siedrix/paperpress.svg?branch=master)](https://travis-ci.org/Siedrix/paperpress)
+[![Coverage Status](https://coveralls.io/repos/github/Siedrix/paperpress/badge.svg?branch=master)](https://coveralls.io/github/Siedrix/paperpress?branch=master)
+[![Dependency Status](https://david-dm.org/Siedrix/paperpress.svg)](https://david-dm.org/Siedrix/paperpress)
+[![NPM version](https://img.shields.io/npm/v/paperpress.svg)](https://www.npmjs.org/package/paperpress)
+
+> Paperpress is a static pages generator for Nodejs.
+
+This library will allow you to have a blog or static pages in markdown on top of any application with express, koa or any other Node.js http server.
+
+For feature request, contact @[Siedrix](http://siedrix.com) on [twitter](https://twitter.com/Siedrix) or [github](https://github.com/Siedrix/paperpress/issues/new).
 
 ## Install
 ```
@@ -19,8 +28,8 @@ paperpress.load()
 
 Use `baseDirectory` to specify where are your Paperpress files and `uriPrefix` to specify the path on your application where you want you Paperpress to be deliver.
 
-- **Deprecated `paperpress.attach` in favor of decouple from express**
-- **Deprecated paperpress themes in favor of decouple from `swig`**
+- _Deprecated `paperpress.attach` in favor of decouple from express_
+- _Deprecated paperpress themes in favor of decouple from `swig`_
 
 For more information check the [examples](/examples).
 
