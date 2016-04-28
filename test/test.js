@@ -297,10 +297,13 @@ describe('Paperpress invalid items', function () {
 
 	it('#paperpress duplicate slugs', function () {
 		var paperpress = new Paperpress({
-			baseDirectory: 'test/reload',
+			baseDirectory: 'test/duplicate-paths',
 			uriPrefix: '/blog'
 		})
+		var duplicatePaths = ['/blog/articles/article']
 		paperpress.load()
+		assert.equal(_.isArray(paperpress._getDuplicatePaths(paperpress.items)), true)
+		assert.equal(_.isEqual(paperpress._getDuplicatePaths(paperpress.items), duplicatePaths), true)
 	})
 })
 
