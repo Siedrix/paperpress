@@ -39,12 +39,12 @@ var Paperpress = function (config) {
 	this.baseDirectory = config.baseDirectory || 'static'
 	this.uriPrefix = config.uriPrefix
 	this.pathBuilder = config.pathBuilder || function (item, collectionName) {
-		var suggestedPath = '/' + collectionName + '/' + item.slug
+		var path = '/' + collectionName + '/' + item.slug
 		if (self.uriPrefix) {
-			suggestedPath = this.uriPrefix + suggestedPath
+			path = this.uriPrefix + path
 		}
 
-		return suggestedPath
+		return path
 	}
 
 	this.items = []
@@ -116,9 +116,9 @@ Paperpress.prototype._fileToItem = function (file) {
 		slug: slug
 	}
 
-	item.suggestedPath = this.pathBuilder(item, file.collectionName)
+	item.path = this.pathBuilder(item, file.collectionName)
 	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
-	this.paths.push(item.suggestedPath)
+	this.paths.push(item.path)
 
 	return item
 }

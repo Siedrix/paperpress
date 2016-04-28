@@ -258,7 +258,7 @@ describe('Paperpress items', function () {
 			type: 'snippets',
 			title: 'header',
 			slug: 'header',
-			suggestedPath: '/blog/snippets/header',
+			path: '/blog/snippets/header',
 			content: '<h2>This is the header</h2>\n'
 		})
 	})
@@ -272,7 +272,7 @@ describe('Paperpress items', function () {
 			type: 'snippets',
 			title: 'title section-with _html.test',
 			slug: 'title-section-with-htmltest',
-			suggestedPath: '/blog/snippets/title-section-with-htmltest',
+			path: '/blog/snippets/title-section-with-htmltest',
 			content: '<div id="title"><h1>Ground Control to Major Tom</h1></div>\n'
 		})
 	})
