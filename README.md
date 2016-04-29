@@ -7,6 +7,8 @@
 
 > Paperpress is a static pages generator for Nodejs.
 
+[![NPM](https://nodei.co/npm/paperpress.png?downloads=true&stars=true)](https://nodei.co/npm/paperpress/)
+
 This library will allow you to have a blog or static pages in markdown on top of any application with express, koa or any other Node.js http server.
 
 For feature request, contact @[Siedrix](http://siedrix.com) on [twitter](https://twitter.com/Siedrix) or [github](https://github.com/Siedrix/paperpress/issues/new).
