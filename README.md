@@ -110,3 +110,7 @@ var items = paperpress.items.find(function(item){
 
 - [Rogr](https://github.com/rogr)
 - [Markotom](https://github.com/markotom)
+
+
+### [License](LICENSE)
+Released under the [MIT license](LICENSE).
