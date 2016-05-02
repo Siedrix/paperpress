@@ -1,6 +1,6 @@
 var express = require('express'),
 	_ = require('underscore'),
-	Paperpress = require('../../paperpress').Paperpress;
+	Paperpress = require('../../paperpress');
 
 var server = express();
 

@@ -1,6 +1,6 @@
 const koa = require('koa')
 const route = require('koa-route')
-const Paperpress = require('../../paperpress').Paperpress
+const Paperpress = require('../../paperpress')
 const _ = {
   findWhere: require('lodash.findwhere')
 }

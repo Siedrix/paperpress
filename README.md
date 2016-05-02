@@ -13,7 +13,7 @@ This library will allow you to have a blog or static pages in markdown/html on t
 
 For feature request, contact @[Siedrix](http://siedrix.com) on [twitter](https://twitter.com/Siedrix) or [github](https://github.com/Siedrix/paperpress/issues/new).
 
-## TL;DR
+#### TL;DR
 
 Paperpress will convert a directory structure of markdown files into items that you can use in your application. This items will be sorted in collections.
 
@@ -37,11 +37,11 @@ paperpress.load()
 Use `baseDirectory` to specify where are your Paperpress files. Default value is `static`
 
 Then you can use the items in a express app like this:
-```
+```js
 app.get('/blog', function (req, res) {
-	var articles = paperpress.getCollection('articles')
+  var articles = paperpress.getCollection('articles')
 
-	res.render({articles:articles})
+  res.render({articles:articles})
 })
 ```
 
@@ -79,30 +79,30 @@ The reason to have a the directory style is to allow more configuration, since y
 ## Hooks
 
 You can declare hooks to modify the items after they are loaded.
-```
+```js
 var paperpress = new Paperpress({})
 
 paperpress.addHook(function (item) {
-	item.loadDate = new Date()
+  item.loadDate = new Date()
 })
 ```
 
 ## Usefull snippets for paperpress
 
-### Find all items in a collection
-```
+##### Find all items in a collection
+```js
 var articles = paperpress.getCollection('articles')
 ```
 
-### Find all items in multiple collections
-```
+##### Find all items in multiple collections
+```js
 var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 ```
 
-### Find one item in paperpress
-```
+##### Find one item in paperpress
+```js
 var items = paperpress.items.find(function(item){
-	return item.path === '/home'
+  return item.path === '/home'
 })
 ```
 
@@ -110,4 +110,3 @@ var items = paperpress.items.find(function(item){
 
 - [Rogr](https://github.com/rogr)
 - [Markotom](https://github.com/markotom)
-
