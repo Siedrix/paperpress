@@ -266,4 +266,4 @@ Paperpress.helpers.createFeed = function (description, items) {
 	return feed
 }
 
-exports.Paperpress = Paperpress
+module.exports = Paperpress

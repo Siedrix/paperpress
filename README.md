@@ -9,42 +9,105 @@
 
 [![NPM](https://nodei.co/npm/paperpress.png?downloads=true&stars=true)](https://nodei.co/npm/paperpress/)
 
-This library will allow you to have a blog or static pages in markdown on top of any application with express, koa or any other Node.js http server.
+This library will allow you to have a blog or static pages in markdown/html on top of any application with express, koa or any other Node.js http server.
 
 For feature request, contact @[Siedrix](http://siedrix.com) on [twitter](https://twitter.com/Siedrix) or [github](https://github.com/Siedrix/paperpress/issues/new).
+
+## TL;DR
+
+Paperpress will convert a directory structure of markdown files into items that you can use in your application. This items will be sorted in collections.
 
 ## Install
 ```
 npm install paperpress
 ```
 
-## Usage
+## Basic usage
 Create a Paperpress instance
 ```js
 var Paperpress = require('paperpress')
+
 var paperpress = new Paperpress({
   baseDirectory: 'static'
 })
+
 paperpress.load()
 ```
 
-Use `baseDirectory` to specify where are your Paperpress files and `uriPrefix` to specify the path on your application where you want you Paperpress to be deliver.
+Use `baseDirectory` to specify where are your Paperpress files. Default value is `static`
 
-- _Deprecated `paperpress.attach` in favor of decouple from express_
-- _Deprecated paperpress themes in favor of decouple from `swig`_
+Then you can use the items in a express app like this:
+```
+app.get('/blog', function (req, res) {
+	var articles = paperpress.getCollection('articles')
+
+	res.render({articles:articles})
+})
+```
 
 For more information check the [examples](/examples).
 
-## Directory structure
-Then create a directory for you Paperpress files, each directory will be treated as a independent collection. Suggested directories:
+**Warning:** Load function is a sync function.
+
+# Paperpress structure
+
+Paperpress has 3 concepts: Collections, Items and Hooks.
+
+## Collections
+
+This are folders located directly under the `baseDirectory` and help organice our items in diferent groups.
+
+Suggested directories:
 
 - **/articles** this folder will contain all the blog posts of the application.
 - **/pages** this folder will contain all the pages of the application.
 - **/snippers** this folder will contain all the snippets of the application, usually single files.
 
-## Collection item as directory
-- **info.json** This file needs to have title, description and date. Path is optional, will use a slugify version of the title if its not present.
+## Items
+
+Inside each of your collection folders you can have 2 diferent types of items, the once based on a directory structure and the once based on a single markdown file.
+
+### Items as directory
+- **info.json** This file needs to have title and date.
 - **content.md** This is the main content of the article, it should be written in mark up.
 
-## Collection item as file
-- **[ITEM_NAME].md** This file will be converted to a collection item with title, slug, sugestedUri and content.
+### Items as file
+- **[ITEM_NAME].md** This file will be converted into an item with title, slug, path and  content.
+
+The reason to have a the directory style is to allow more configuration, since you can add any atributes that you want to the info.json file and to modify a path or slug in a particular way.
+
+## Hooks
+
+You can declare hooks to modify the items after they are loaded.
+```
+var paperpress = new Paperpress({})
+
+paperpress.addHook(function (item) {
+	item.loadDate = new Date()
+})
+```
+
+## Usefull snippets for paperpress
+
+### Find all items in a collection
+```
+var articles = paperpress.getCollection('articles')
+```
+
+### Find all items in multiple collections
+```
+var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
+```
+
+### Find one item in paperpress
+```
+var items = paperpress.items.find(function(item){
+	return item.path === '/home'
+})
+```
+
+## Collaborators
+
+- [Rogr](https://github.com/rogr)
+- [Markotom](https://github.com/markotom)
+

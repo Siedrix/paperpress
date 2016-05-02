@@ -2,7 +2,7 @@
 var _ = require('underscore')
 var fs = require('fs')
 var assert = require('assert')
-var Paperpress = require('../paperpress').Paperpress
+var Paperpress = require('../paperpress')
 
 /**
 **************************************
