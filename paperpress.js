@@ -1,16 +1,10 @@
 var fs = require('fs')
 var path = require('path')
 var Feed = require('feed')
+
 var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
-
-var marked = new Remarkable({
-	html: true,
-	linkify: true,
-	highlight: function (code) {
-		return highlighter.highlightAuto(code).value
-	}
-})
+var marked = null
 
 var sluglify = function (str) {
 	str = str.replace(/^\s+|\s+$/g, '') // trim
@@ -47,6 +41,15 @@ var Paperpress = function (config) {
 		return path
 	}
 
+	this.remarkableOptions = config.remarkableOptions || {
+		html: true,
+		linkify: true,
+		highlight: function (code) {
+			return highlighter.highlightAuto(code).value
+		}
+	}
+
+	marked = new Remarkable(this.remarkableOptions)
 	this.items = []
 	this.paths = []
 	this._hooks = config.hooks || []
