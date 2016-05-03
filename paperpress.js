@@ -4,7 +4,6 @@ var Feed = require('feed')
 
 var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
-var marked = null
 
 var sluglify = function (str) {
 	str = str.replace(/^\s+|\s+$/g, '') // trim
@@ -49,9 +48,10 @@ var Paperpress = function (config) {
 		}
 	}
 
-	marked = new Remarkable(this.remarkableOptions)
 	this.items = []
 	this.paths = []
+
+	this._marked = new Remarkable(this.remarkableOptions)
 	this._hooks = config.hooks || []
 }
 
@@ -103,7 +103,7 @@ Paperpress.prototype._directoryToItem = function (directory) {
 		item.content = fs.readFileSync(directory.path + '/content.html').toString()
 	} else {
 		var content = fs.readFileSync(directory.path + '/content.md').toString()
-		item.content = marked.render(content)
+		item.content = this._marked.render(content)
 	}
 
 	return item
@@ -121,7 +121,7 @@ Paperpress.prototype._fileToItem = function (file) {
 	}
 
 	item.path = this.pathBuilder(item, file.collectionName)
-	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
+	item.content = (fileType === '.md') ? this._marked.render(fileContent) : fileContent
 	this.paths.push(item.path)
 
 	return item
