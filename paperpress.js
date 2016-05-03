@@ -3,6 +3,7 @@ var path = require('path')
 var Feed = require('feed')
 var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
+var frontMatter = require('front-matter')
 
 var marked = new Remarkable({
 	html: true,
@@ -114,12 +115,32 @@ Paperpress.prototype._fileToItem = function (file) {
 
 	var item = {
 		title: name,
-		slug: slug
+		slug: slug,
+		content: fileContent,
+		path: null
 	}
 
-	item.path = this.pathBuilder(item, file.collectionName)
-	item.content = (fileType === '.md') ? marked.render(fileContent) : fileContent
+	if (frontMatter.test(fileContent)) {
+		var contentData = frontMatter(fileContent)
+		var attr = contentData.attributes
+
+		item = {
+			title: attr.title,
+			slug: attr.slug,
+			path: attr.path,
+			content: contentData.body
+		}
+		if (attr.date) {
+			item['date'] = new Date(attr.date)
+		}
+	}
+
+	item.path = item.path ? item.path : this.pathBuilder(item, file.collectionName)
 	this.paths.push(item.path)
+
+	if (fileType !== '.html') {
+		item.content = marked.render(item.content)
+	}
 
 	return item
 }
