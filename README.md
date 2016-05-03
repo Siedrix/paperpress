@@ -87,7 +87,7 @@ paperpress.addHook(function (item) {
 })
 ```
 
-## Usefull snippets for paperpress
+## Useful snippets for paperpress
 
 ##### Find all items in a collection
 ```js
