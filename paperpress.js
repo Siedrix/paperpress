@@ -125,24 +125,31 @@ Paperpress.prototype._fileToItem = function (file) {
 
 	if (frontMatter.test(fileContent)) {
 		var contentData = frontMatter(fileContent)
-		var attr = contentData.attributes
+		var dataAttributes = contentData.attributes
 
-		item = {
-			title: attr.title,
-			slug: attr.slug,
-			path: attr.path,
-			content: contentData.body
+		// Iterate through attributes and merge into the default item
+		for (var k in dataAttributes) {
+			if (dataAttributes.hasOwnProperty(k)) {
+				item[k] = dataAttributes[k]
+			}
 		}
-		if (attr.date) {
-			item['date'] = new Date(attr.date)
+
+		// Assign parsed content
+		item.content = contentData.body
+
+		// If date exists then parse it
+		if (dataAttributes.date) {
+			item.date = new Date(dataAttributes.date)
 		}
 	}
 
+	// If path was not assigned, then use helper method
 	item.path = item.path ? item.path : this.pathBuilder(item, file.collectionName)
 	this.paths.push(item.path)
 
+	// Do not render as markdown if file is .html
 	if (fileType !== '.html') {
-		item.content = marked.render(item.content)
+		item.content = this._marked.render(item.content)
 	}
 
 	return item
