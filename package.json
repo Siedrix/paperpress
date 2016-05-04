@@ -9,6 +9,9 @@
     "report": "npm run coverage && open coverage/lcov-report/paperpress/paperpress.js.html",
     "lint": "eslint gulpfile.js paperpress.js test/test.js; true"
   },
+  "bin": {
+    "paperpress": "./paperpress-cli.js"
+  },
   "keywords": [
     "express",
     "markdown",
@@ -16,8 +19,10 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "chalk": "^1.1.3",
     "feed": "~0.3.0",
     "highlight.js": "^9.3.0",
+    "inquirer": "^1.0.2",
     "remarkable": "^1.6.2"
   },
   "repository": {
