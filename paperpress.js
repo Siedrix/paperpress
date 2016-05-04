@@ -112,7 +112,7 @@ Paperpress.prototype._directoryToItem = function (directory) {
 
 Paperpress.prototype._fileToItem = function (file) {
 	var fileContent = fs.readFileSync(file.path).toString()
-	var fileType = (path.extname(file.path) === '.md') ? '.md' : '.html'
+	var fileType = path.extname(file.path)
 	var name = file.name.replace(fileType, '')
 	var slug = this._titleToSlug(name)
 
@@ -142,6 +142,11 @@ Paperpress.prototype._fileToItem = function (file) {
 		if (dataAttributes.date) {
 			item.date = new Date(dataAttributes.date)
 		}
+	}
+
+	if (!item.date) {
+		var stat = fs.statSync(file.path)
+		item.date = new Date(stat.mtime)
 	}
 
 	// If path was not assigned, then use helper method

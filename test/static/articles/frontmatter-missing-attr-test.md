@@ -1,3 +1,0 @@
----
-path: ashes-to-ashes
----

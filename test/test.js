@@ -253,7 +253,10 @@ describe('Paperpress items', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 
-		var snippet = _.findWhere(paperpress.getCollection('snippets'), {slug: 'header'})
+		var snippet = _.findWhere(paperpress.items, {type: 'snippets', slug: 'header'})
+		assert.equal(snippet.date instanceof Date, true)
+		delete snippet.date
+
 		assert.deepEqual(snippet, {
 			type: 'snippets',
 			title: 'header',
@@ -267,13 +270,51 @@ describe('Paperpress items', function () {
 		var paperpress = new Paperpress(paperpressBaseConfig)
 		paperpress.load()
 
-		var snippet = _.findWhere(paperpress.getCollection('snippets'), {slug: 'title-section-with-htmltest'})
+		var snippet = _.findWhere(paperpress.items, {type: 'snippets', slug: 'title-section-with-htmltest'})
+		assert.equal(snippet.date instanceof Date, true)
+		delete snippet.date
+
 		assert.deepEqual(snippet, {
 			type: 'snippets',
 			title: 'title section-with _html.test',
 			slug: 'title-section-with-htmltest',
 			path: '/blog/snippets/title-section-with-htmltest',
 			content: '<div id="title"><h1>Ground Control to Major Tom</h1></div>\n'
+		})
+	})
+
+	it('#paperpress item with front matter', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var frontMatterItem = _.findWhere(paperpress.items, {type: 'articles', slug: 'life-on-mars'})
+		assert.equal(frontMatterItem.date instanceof Date, true)
+		delete frontMatterItem.date		
+
+		assert.deepEqual(frontMatterItem, {
+			title: 'Is there life on Mars?',
+			slug: 'life-on-mars',
+			content: '<p><strong>Content</strong></p>\n',
+			path: '/blog/articles/life-on-mars',
+			type: 'articles'
+		})
+	})
+
+	it('#paperpress item with front matter in html', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var frontMatterItem = _.findWhere(paperpress.items, {type: 'articles', path: '/ashes-to-ashes'})
+		assert.equal(frontMatterItem.date instanceof Date, true)
+		delete frontMatterItem.date
+
+		assert.deepEqual(frontMatterItem, {
+			title: 'frontmatter-missing-attr-test',
+			slug: 'frontmatter-missing-attr-test',
+			content: '<h1>Dust to dust</h1>\n\n',
+			path: '/ashes-to-ashes',
+			video: 'https://www.youtube.com/watch?v=CMThz7eQ6K0',
+			type: 'articles'
 		})
 	})
 })
