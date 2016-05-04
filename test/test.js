@@ -98,7 +98,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 7 )
+			assert.equal( paperpress.items.length, 9 )
 		})
 
 		it('paperpress should get collection into items array with out repetition', function () {
@@ -107,7 +107,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 7 )
+			assert.equal( paperpress.items.length, 9 )
 		})
 
 		it('paperpress should get collection into items array running the hooks', function () {
@@ -121,7 +121,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 7 )
+			assert.equal( paperpress.items.length, 9 )
 			assert.equal( paperpress.items[0].hookRunning, true )
 			assert.equal( paperpress.items[0].secondHookRunning, true )
 		})
@@ -133,7 +133,7 @@ describe('Paperpress', function () {
 			paperpress.load()
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 11 )
+			assert.equal( paperpress.items.length, 13 )
 		})
 	})
 
@@ -144,7 +144,7 @@ describe('Paperpress', function () {
 
 			var articles = paperpress.getCollection('articles')
 			assert.equal( _.isArray( articles ), true )
-			assert.equal( articles.length, 7 )
+			assert.equal( articles.length, 9 )
 
 			var pages = paperpress.getCollection('pages')
 			assert.equal( _.isArray( pages ), true )
@@ -163,7 +163,7 @@ describe('Paperpress', function () {
 
 			var articlesAndSnippets = paperpress.getCollections(['articles', 'snippets'])
 			assert.equal( _.isArray( articlesAndSnippets ), true )
-			assert.equal( articlesAndSnippets.length, 9 )
+			assert.equal( articlesAndSnippets.length, 11 )
 
 			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 			assert.equal( _.isArray( pagesAndSnippets ), true )
@@ -314,7 +314,7 @@ describe('Paperpress reload', function () {
 
 		var articles = paperpress.getCollection('articles')
 		assert.equal( _.isArray( articles ), true )
-		assert.equal( articles.length, 7 )
+		assert.equal( articles.length, 9 )
 
 		var pages = paperpress.getCollection('pages')
 		assert.equal( _.isArray( pages ), true )
