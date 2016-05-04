@@ -49,6 +49,30 @@ For more information check the [examples](/examples).
 
 **Warning:** Load function is a sync function.
 
+### Markdown parser
+
+Paperpress use [`Remarkable`](https://github.com/jonschlinkert/remarkable) to parse the markdown files. You can use `remarkableOptions` to specify your custom [options](https://github.com/jonschlinkert/remarkable#options).
+
+ ```js
+ var Paperpress = require('paperpress')
+
+ var paperpress = new Paperpress({
+   remarkableOptions: {/* Your Remarkable options */}
+ })
+ ```
+
+ The default value is:
+
+ ```js
+ {
+   html: true,
+   linkify: true,
+   highlight: function (code) {
+     return highlighter.highlightAuto(code).value
+   }
+ }
+ ```
+
 # Paperpress structure
 
 Paperpress has 3 concepts: Collections, Items and Hooks.
