@@ -4,6 +4,7 @@ var Feed = require('feed')
 
 var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
+var frontMatter = require('front-matter')
 
 var sluglify = function (str) {
 	str = str.replace(/^\s+|\s+$/g, '') // trim
@@ -117,12 +118,40 @@ Paperpress.prototype._fileToItem = function (file) {
 
 	var item = {
 		title: name,
-		slug: slug
+		slug: slug,
+		content: fileContent,
+		path: null
 	}
 
-	item.path = this.pathBuilder(item, file.collectionName)
-	item.content = (fileType === '.md') ? this._marked.render(fileContent) : fileContent
+	if (frontMatter.test(fileContent)) {
+		var contentData = frontMatter(fileContent)
+		var dataAttributes = contentData.attributes
+
+		Object.keys(dataAttributes)
+			.filter(function (k) { // prevents attribute leaking
+				return dataAttributes.hasOwnProperty(k)
+			})
+			.forEach(function (k) { // merges into item object
+				item[k] = dataAttributes[k]
+			})
+
+		// Assign parsed content
+		item.content = contentData.body
+
+		// If date exists then parse it
+		if (dataAttributes.date) {
+			item.date = new Date(dataAttributes.date)
+		}
+	}
+
+	// If path was not assigned, then use helper method
+	item.path = item.path ? item.path : this.pathBuilder(item, file.collectionName)
 	this.paths.push(item.path)
+
+	// Do not render as markdown if file is .html
+	if (fileType !== '.html') {
+		item.content = this._marked.render(item.content)
+	}
 
 	return item
 }
