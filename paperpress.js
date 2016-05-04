@@ -127,12 +127,13 @@ Paperpress.prototype._fileToItem = function (file) {
 		var contentData = frontMatter(fileContent)
 		var dataAttributes = contentData.attributes
 
-		// Iterate through attributes and merge into the default item
-		for (var k in dataAttributes) {
-			if (dataAttributes.hasOwnProperty(k)) {
+		Object.keys(dataAttributes)
+			.filter(function (k) { // prevents attribute leaking
+				return dataAttributes.hasOwnProperty(k)
+			})
+			.forEach(function (k) { // merges into item object
 				item[k] = dataAttributes[k]
-			}
-		}
+			})
 
 		// Assign parsed content
 		item.content = contentData.body
