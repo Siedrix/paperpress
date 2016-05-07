@@ -116,11 +116,18 @@ Paperpress.prototype._fileToItem = function (file) {
 	var name = file.name.replace(fileType, '')
 	var slug = this._titleToSlug(name)
 
-	var item = {
-		title: name,
-		slug: slug,
-		content: fileContent,
-		path: null
+	var item
+	if (fileType === '.json') {
+		item = JSON.parse(fileContent)
+		item.title = item.title || name
+		item.slug = item.slug || slug
+	} else {
+		item = {
+			title: name,
+			slug: slug,
+			content: fileContent,
+			path: null
+		}
 	}
 
 	if (frontMatter.test(fileContent)) {
@@ -154,7 +161,7 @@ Paperpress.prototype._fileToItem = function (file) {
 	this.paths.push(item.path)
 
 	// Do not render as markdown if file is .html
-	if (fileType !== '.html') {
+	if (fileType === '.md') {
 		item.content = this._marked.render(item.content)
 	}
 

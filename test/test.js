@@ -98,7 +98,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 9 )
+			assert.equal( paperpress.items.length, 10 )
 		})
 
 		it('paperpress should get collection into items array with out repetition', function () {
@@ -107,7 +107,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 9 )
+			assert.equal( paperpress.items.length, 10 )
 		})
 
 		it('paperpress should get collection into items array running the hooks', function () {
@@ -121,7 +121,7 @@ describe('Paperpress', function () {
 			paperpress._loadCollection('articles')
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 9 )
+			assert.equal( paperpress.items.length, 10 )
 			assert.equal( paperpress.items[0].hookRunning, true )
 			assert.equal( paperpress.items[0].secondHookRunning, true )
 		})
@@ -133,7 +133,7 @@ describe('Paperpress', function () {
 			paperpress.load()
 
 			assert.equal( _.isArray( paperpress.items ), true )
-			assert.equal( paperpress.items.length, 13 )
+			assert.equal( paperpress.items.length, 14 )
 		})
 	})
 
@@ -144,7 +144,7 @@ describe('Paperpress', function () {
 
 			var articles = paperpress.getCollection('articles')
 			assert.equal( _.isArray( articles ), true )
-			assert.equal( articles.length, 9 )
+			assert.equal( articles.length, 10 )
 
 			var pages = paperpress.getCollection('pages')
 			assert.equal( _.isArray( pages ), true )
@@ -163,7 +163,7 @@ describe('Paperpress', function () {
 
 			var articlesAndSnippets = paperpress.getCollections(['articles', 'snippets'])
 			assert.equal( _.isArray( articlesAndSnippets ), true )
-			assert.equal( articlesAndSnippets.length, 11 )
+			assert.equal( articlesAndSnippets.length, 12 )
 
 			var pagesAndSnippets = paperpress.getCollections(['pages', 'snippets'])
 			assert.equal( _.isArray( pagesAndSnippets ), true )
@@ -289,7 +289,7 @@ describe('Paperpress items', function () {
 
 		var frontMatterItem = _.findWhere(paperpress.items, {type: 'articles', slug: 'life-on-mars'})
 		assert.equal(frontMatterItem.date instanceof Date, true)
-		delete frontMatterItem.date		
+		delete frontMatterItem.date
 
 		assert.deepEqual(frontMatterItem, {
 			title: 'Is there life on Mars?',
@@ -314,6 +314,24 @@ describe('Paperpress items', function () {
 			content: '<h1>Dust to dust</h1>\n\n',
 			path: '/ashes-to-ashes',
 			video: 'https://www.youtube.com/watch?v=CMThz7eQ6K0',
+			type: 'articles'
+		})
+	})
+
+	it('#paperpress item from json file', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		paperpress.load()
+
+		var jsonItem = _.findWhere(paperpress.items, {type: 'articles', slug: 'item-as-json'})
+
+		assert.equal(jsonItem.date instanceof Date, true)
+		delete jsonItem.date
+
+		assert.deepEqual(jsonItem, {
+			title: 'item as json',
+			slug: 'item-as-json',
+			description: 'This is a fast article',
+			path: '/blog/articles/item-as-json',
 			type: 'articles'
 		})
 	})
@@ -355,7 +373,7 @@ describe('Paperpress reload', function () {
 
 		var articles = paperpress.getCollection('articles')
 		assert.equal( _.isArray( articles ), true )
-		assert.equal( articles.length, 9 )
+		assert.equal( articles.length, 10 )
 
 		var pages = paperpress.getCollection('pages')
 		assert.equal( _.isArray( pages ), true )
