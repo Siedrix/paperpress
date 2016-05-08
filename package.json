@@ -1,6 +1,6 @@
 {
   "name": "paperpress",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "./paperpress",
   "description": "A static pages generator for Node.js.",
   "scripts": {
