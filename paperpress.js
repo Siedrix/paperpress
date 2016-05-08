@@ -122,7 +122,7 @@ Paperpress.prototype._fileToItem = function (file) {
 		item.title = item.title || name
 		item.slug = item.slug || slug
 
-		if(item.date){
+		if (item.date) {
 			item.date = new Date(item.date)
 		}
 	} else {
