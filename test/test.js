@@ -534,3 +534,17 @@ describe('Paperpress feed helper', function () {
 		assert.equal(feed, null)
 	})
 })
+
+describe('Paperpress sitemap helper', function () {
+	it('sitemap shoud be a string', function () {
+		var paperpress = new Paperpress(paperpressBaseConfig)
+		var description = require('./feed-description.json')
+
+		paperpress.load()
+
+		var articles = paperpress.getCollection('articles')
+		var sitemap = Paperpress.helpers.createSiteMap(description, articles)
+
+		assert.equal(typeof sitemap, 'string')
+	})
+})
