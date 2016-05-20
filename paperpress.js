@@ -1,6 +1,7 @@
 var fs = require('fs')
 var path = require('path')
 var Feed = require('feed')
+var sm = require('sitemap')
 
 var Remarkable = require('remarkable')
 var highlighter = require('highlight.js')
@@ -283,6 +284,12 @@ Paperpress.prototype.addHook = function (hook) {
 Paperpress.helpers = {}
 Paperpress.helpers.createFeed = function (description, items) {
 	// Create the Feed instance
+
+	// Eventually it should deprecate link in favor of hostname
+	if (description && !description.link) {
+		description.link = description.hostname
+	}
+
 	try {
 		var feed = new Feed(description)
 	} catch (e) {
@@ -293,7 +300,7 @@ Paperpress.helpers.createFeed = function (description, items) {
 	// Load the items on the feed
 	try {
 		items.forEach(function (item) {
-			item.link = description.link + item.path
+			item.link = (description.hostname || description.link) + item.path
 			item.date = new Date(item.date)
 
 			feed.addItem(item)
@@ -312,6 +319,24 @@ Paperpress.helpers.createFeed = function (description, items) {
 	}
 
 	return feed
+}
+
+Paperpress.helpers.createSiteMap = function (description, items) {
+	// Eventually it should deprecate link in favor of hostname
+	if(!description.hostname){
+		description.hostname = description.link
+	}
+
+	var sitemap = sm.createSitemap({
+		hostname: description.hostname,
+		cacheTime: 600000
+	})
+
+	items.forEach(function (item) {
+		sitemap.add({url: item.path, changefreq: 'weekly'})
+	})
+
+	return sitemap.toString()
 }
 
 module.exports = Paperpress
