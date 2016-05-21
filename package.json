@@ -19,7 +19,8 @@
     "feed": "~0.3.0",
     "front-matter": "^2.0.7",
     "highlight.js": "^9.3.0",
-    "remarkable": "^1.6.2"
+    "remarkable": "^1.6.2",
+    "sitemap": "^1.6.0"
   },
   "repository": {
     "type": "git",
