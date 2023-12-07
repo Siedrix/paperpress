@@ -323,7 +323,7 @@ Paperpress.helpers.createFeed = function (description, items) {
 
 Paperpress.helpers.createSiteMap = function (description, items) {
 	// Eventually it should deprecate link in favor of hostname
-	if(!description.hostname){
+	if (!description.hostname) {
 		description.hostname = description.link
 	}
 

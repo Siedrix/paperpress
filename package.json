@@ -4,7 +4,7 @@
   "main": "./paperpress",
   "description": "A static pages generator for Node.js.",
   "scripts": {
-    "test": "./node_modules/mocha/bin/_mocha -R spec && npm run lint",
+    "test": "mocha -R spec && npm run lint",
     "coverage": "istanbul cover ./node_modules/mocha/bin/_mocha -- -R nyan",
     "report": "npm run coverage && open coverage/lcov-report/paperpress/paperpress.js.html",
     "lint": "eslint gulpfile.js paperpress.js test/test.js; true"
